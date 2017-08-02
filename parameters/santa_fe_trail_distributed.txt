@@ -18,5 +18,5 @@ SELECTION:              tournament
 TOURNAMENT_SIZE:        5
 VERBOSE:                False
 MULTIAGENT:             True
-AGENT_SIZE:             600
+AGENT_SIZE:             900
 INTERACTION_PROBABILITY:0.7

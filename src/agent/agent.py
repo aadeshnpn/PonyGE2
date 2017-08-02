@@ -5,6 +5,7 @@ from operators.crossover import crossover
 from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
 from operators.selection import selection
+from algorithm.parameters import params
 
 class Agent():
     """
@@ -81,7 +82,7 @@ class Agent():
             get_stats(individuals)
 
             # Sort the individuals list based on the fitness objective
-            if params['FITNESS_FUNCTION'].maximise
+            if params['FITNESS_FUNCTION'].maximise:
                 individuals.sort(reverse=False)
             else:
                 individuals.sort(reverse=True)
