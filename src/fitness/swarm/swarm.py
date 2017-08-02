@@ -28,14 +28,15 @@ class swarm(base_ff):
 
     def evaluate(self, ind, **kwargs):
         code = ind.phenotype
-        print (code)        
+        #print (code)        
         env = Environment(rules_stream=code)
+        #print (env.rules_stream)
         env.build_json_environment()
         #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
         env.add_agents(500)
         #first_agent = np.random.choice(env.agents)
         #first_agent.information = True
-        food_collected = env.simulator(epoch) 
+        food_collected = env.simulator(1) 
         #Maximum food that can be collected from single source is 1000        
         #routine = ant.build_routine(code)
         #print (code,'Food eaten',ant.eaten)

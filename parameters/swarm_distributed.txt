@@ -1,5 +1,5 @@
 CACHE:                  True
-CODON_SIZE:             1000
+CODON_SIZE:             1000000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.75
 DEBUG:                  False

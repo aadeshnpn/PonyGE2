@@ -1,26 +1,18 @@
 # General structure of a ruleset and of rules
-<root> ::= [?xml version="1.0" ?][rulebase]<ruleset>[/rulebase]
-#<statoiniziale> ::= "<initial_state " p1=\"<prob_init_state> \" " " p2=\"<prob_init_state> \" " " p3=\"<prob_init_state> \" "/>"
+<root> ::= [?xml version=%1.0% ?][rulebase]<ruleset>[/rulebase]
 <ruleset> ::= <regola>|<regola><ruleset>|<regola><regola><ruleset>|<regola><regola><regola><ruleset>
 <regola> ::= [rule]<firstpart><secondpart><thirdpart>[/rule]
 <firstpart> ::= [previous_states]<ps_list>[/previous_states]
 <secondpart> ::= [preconditions]<pc_list>[/preconditions]
 <thirdpart> ::= [actions]<a_list>[/actions]
-#<ps_list> ::= <ps>|<ps><ps>|<ps><ps><ps>
 <ps_list> ::= <ps><ps><ps>
-<ps> ::= [prv_state id="<id_state>" /]
-#<pc_list> ::= <pc>|<pc><pc>|<pc><pc><pc>|<pc><pc><pc><pc>
+<ps> ::= [prv_state id=%<id_state>% /]
 <pc_list> ::= <pc>
-<pc> ::= [precond id="<triplet><triplet><triplet><triplet><triplet><triplet><triplet>" value="<bool>" /]
-# List of actions
-#<a_list> ::= <azione>|<azione><azione>|<azione><azione><azione>|<azione><azione><azione><azione>
+<pc> ::= [precond id=%<triplet><triplet><triplet><triplet><triplet><triplet><triplet>% value=%<bool>% /]
 <a_list> ::= <azione_cngstate><azione_cngvar>
-#<azione> ::= <azione_cngstate>|<azione_cngvar>
-#<azione_cngstate> ::= [act1  type="1" prob="<probability>"  nxt_state_id="<dual><dual><dual>" /]
-<azione_cngstate> ::= [act1  type="1" prob="<prob>"  nxt_state_id="<id_state>" /]
-<azione_cngvar> ::= [act2  type="2" prob="<probability>"  variable_id="<id_var>" value="<bool>" /]
+<azione_cngstate> ::= [act1  type=%1% prob=%<prob>%  nxt_state_id=%<id_state>% /]
+<azione_cngvar> ::= [act2  type=%2% prob=%<probability>%  variable_id=%<id_var>% value=%<bool>% /]
 # Terminal expansions
-# <rulebase> ::= 
 <id_state>::=0|1|2|3|4
 <triplet>::=0|1|-
 <dual>::=0|1

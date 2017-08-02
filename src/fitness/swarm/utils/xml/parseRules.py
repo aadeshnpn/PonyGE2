@@ -3,8 +3,8 @@ import sys
 import os
 import glob
 
-import utils.xml.definitions as GESwarm
-import utils.xml.conversions as Conv
+import fitness.swarm.utils.xml.definitions as GESwarm
+import fitness.swarm.utils.xml.conversions as Conv
 #import definitions as GESwarm
 #import conversions as Conv
 

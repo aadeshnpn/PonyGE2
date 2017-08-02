@@ -1,9 +1,9 @@
 import numpy as np
 import copy
 from enum import Enum
-from utils.geomUtils import *
+from fitness.swarm.utils.geomUtils import *
 import sys
-from utils.world_objects import *
+from fitness.swarm.utils.world_objects import *
 #from pydge.genetic import *
 import ast
 from operator import itemgetter

@@ -8,25 +8,25 @@ import copy
 from joblib import Parallel, delayed
 import multiprocessing
 import json
-from agent import Agent
-from utils.world_objects import *
-from utils.potentialFields import PotentialField
+from fitness.swarm.agent import Agent
+from fitness.swarm.utils.world_objects import *
+from fitness.swarm.utils.potentialFields import PotentialField
 #from pydge.genetic import Grammar
 
-from utils.xml.parseRules import ParseRules
+from fitness.swarm.utils.xml.parseRules import ParseRules
 import argparse
 import ast
 import random
 import pickle
 
 
-parser = argparse.ArgumentParser(description = "Evolution run or viewer run")
+#parser = argparse.ArgumentParser(description = "Evolution run or viewer run")
 #parser.add_argument('--viewer',default=False)
 #parser.add_argument('--evolution',default=False)
 #parser.add_argument('--rules',default="rules/gen_rules.xml")
 #parser.add_argument('--rules')
 
-args = parser.parse_args()
+#args = parser.parse_args()
 #args.viewer = ast.literal_eval(str(args.viewer))
 #args.evolution = ast.literal_eval(str(args.evolution))
 
@@ -35,6 +35,9 @@ width = 1600
 height = 800
 np.random.seed(123)
 
+class Testing:
+    def __init__():
+        self.r = None
 
 
 def eprint(*args, **kwargs):
@@ -113,7 +116,7 @@ class Environment:
         self.food_id = 0
         #self.obstacles = None
         #self.rules_filename = os.path.join(ROOT_DIR, args.rules)
-        self.rules_stream = rules_stream
+        self.rules_stream = self.xml_filter(rules_stream)
         self.rules = []
         self.fitness = 0
         self.potential_fields = []
@@ -139,6 +142,15 @@ class Environment:
                 i += 1
         self.grid_len = i - 1
         
+
+    def xml_filter(self,output):
+        #print (type(output))
+        output = output.replace('[','<')
+        output = output.replace('/]','/>')
+        output = output.replace(']','>')
+        output = output.replace('%','"')
+        return output
+
     def parse_grammar(self, filename, xmlstring = None):
         p1 = ParseRules(filename,xmlstring)
         rules = p1.convert()
