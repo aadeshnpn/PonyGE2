@@ -16,7 +16,7 @@ from fitness.swarm.utils.potentialFields import PotentialField
 from fitness.swarm.utils.xml.parseRules import ParseRules
 import argparse
 import ast
-import random
+#import random
 import pickle
 
 
@@ -151,7 +151,24 @@ class Environment:
         output = output.replace('%','"')
         return output
 
+
     def parse_grammar(self, filename, xmlstring = None):
+        p1 = ParseRules(filename,xmlstring)
+        rules = p1.convert()
+        i = 0
+        rules_list = []
+        for rule in rules:
+            r1 = Rules(i,rule[0],rule[1],rule[2])
+            #print (rule[0]['behaviors'])
+            #self.rules.append(r1)
+            rules_list.append(r1)
+            i += 1
+        #print (self.rules[0].behaviours)
+        if xmlstring:
+            return rules_list
+        else:
+            self.rules = rules_list
+        """                    
         p1 = ParseRules(filename,xmlstring)
         rules = p1.convert()
         i = 0
@@ -165,7 +182,7 @@ class Environment:
         else:
             self.rules = rules_list
             return self.rules
-
+        """
     def build_json_environment(self):
         json_data = open(self.filename).read()
 
@@ -277,6 +294,8 @@ class Environment:
             ##Since the signal is not broadcaseted, the grid is empty
             self.agents[i].signal = Signal(i,self.agents[i].location,self.signal_radius,[]) 
             self.agents[i].rules = self.parse_grammar(None,self.rules_stream)
+        #eprint (len(self.agents[0].rules))
+        #eprint (self.agents[0].rules[0].behaviours)
 
     def add_cue(self,location,direction):
         cue_grid = self.get_adjcent_grid(location,self.cue_radius)        
@@ -454,7 +473,7 @@ class Environment:
             ##Genetic
             #self.agents[i].act(self)
             ##Communication
-            #self.agents[i].move(self)
+            self.agents[i].move(self)
             
             #if self.cues:
             #    eprint (self.cues,self.cues[1].location)
@@ -482,7 +501,7 @@ class Environment:
 
     def simulator(self,epoch):
         self.frames_per_sec = 120
-        ticks = 900000
+        ticks = 100000
         while ticks/len(self.agents) > 50 :
             self.looper()
             ticks -= len(self.agents)
@@ -521,14 +540,14 @@ class Environment:
         
 def main(epoch):
     #global env
-    with open('rules/gen_rules.xml', 'r') as f:
+    with open('rules/handcoded_rules_chromo.xml', 'r') as f:
         rules_stream = f.read() 
     #print (rules_stream)
     env = Environment(width=width,height=height,rules_stream=rules_stream)
     #print (env.grid)
     env.build_json_environment()
     #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
-    env.add_agents(500)
+    env.add_agents(100)
     #first_agent = np.random.choice(env.agents)
     #first_agent.information = True
     env.simulator(epoch)

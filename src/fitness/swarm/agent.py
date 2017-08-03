@@ -7,7 +7,7 @@ from fitness.swarm.utils.world_objects import *
 #from pydge.genetic import *
 import ast
 from operator import itemgetter
-
+np.random.seed(11)
 #behavior = Enum('behavior', 'RANDOM_WALK GO_TO_SOURCE GO_TO_NEST')
 #action = Enum('action','DO_NOTHING CHANGE_BEHAVIOR SET_INTERNAL_VARIABLE')        
 
@@ -42,6 +42,19 @@ class Agent:
         self.environment_food = None
         self.environment_agents = None
         self.move_behaviour = True
+        #if self.rules is None:
+            
+        #self.cue_id = 1
+        #self.cue = []
+        #self.precondition_enum = Enum('precondition', 'HAS_FOOD ON_NEST ON_GRASS')
+        #Behaviour
+        ##Random_walk
+        ##Go_to_nest
+        ##Go_to_source
+        ##PHOTOASIX
+        ##FOLLOW_COLOR
+        ##FOLLOW_ROBOTS
+        ##Radiate Signal
 
         ##Pre-conditions
         self.HAS_FOOD = False
@@ -127,10 +140,6 @@ class Agent:
         #self.behaviour = {0:}
         #self.health = 
 
-    def increment_timestep(self):
-        if self.genetic_mode:
-            self.timestep += 1
-
     def get_default(self):
         return False
 
@@ -209,11 +218,13 @@ class Agent:
         #print (self.current_behaviors)
         i = 0
         self.active_rule = {}
+        #print (self.rules)
         for rule in self.rules:
             ##First check for the behaviours match with the rule before procedding
             ##This constraint is define in paper
             #print (rule.behaviours,rule.preconditions,rule.actions)
             precondition_met = True
+            #print (rule)
             if not self.current_behaviors.isdisjoint(rule.behaviours):
                 ##Since this rule behavirous matches with the current behavior. 
                 ##Check if the preconditions are satisfied
@@ -369,47 +380,6 @@ class Agent:
         self.on_obstacles(grid_values,environment)
         self.on_signal(grid_values,environment)
         self.on_cue(grid_values,environment)
-        #self.on_food(grid_values,environment)
-        #eprint (self.name,self.current_behaviors)
-        #if self.genetic_mode:
-        #    self.on_agents(grid_values,environment)
-    
-
-    def act(self,environment):
-        if self.genetic_mode and self.ON_AGENTS:
-            #self.chromosome_stack += [{'chromosome':self.chromosome,'fitness':self.chromosome.gene.fitness}] + [ {'chromosome':agent.chromosome,'fitness':agent.chromosome.gene.fitness} for agent in self.environment_agents ]
-            self.chromosome_stack += [self.chromosome] + [ agent.chromosome for agent in self.environment_agents ]
-            #print (self.chromosome_stack)
-            if self.timestep % self.timestep_threshold == 0:            
-                if self.best_ever is None:
-                    self.best_ever = self.chromosome
-                best_ever = max(self.chromosome_stack)
-                #individuals.sort(reverse = True)
-                #self.chromosome_stack = sorted(self.chromosome_stack,key=itemgetter('fitness'),reverse=True)
-                self.chromosome_stack.sort(reverse = True)
-                #new_pop = []
-                #while len(new_pop) < 2:
-                new_pop = self.chromosome.gene.onepoint_crossover(best_ever,self.chromosome_stack[1])
-                new_pop = self.chromosome.gene.int_flip_mutation(new_pop)
-                new_pop = Chromosome(Genetics(self.chromosome.gene.grammar,fitness_function=ForagingFitness()),new_pop)
-                    #agent_list= Agent(Genetics(self.gene.grammar),pop)
-                #print (agent_list)
-                #for agent in agent_list:
-                    ##Fitness function call for swarm
-                #    agent.gene.eval_fitness(agent)  
-                    ##Fitness function call for stringmatch
-                    #agent.gene.eval_fitness(agent)
-                #new_pop = self.chromosome.gene.generational_replacement(agent_list,individuals)
-                #parents = self.chromosome.gene.tournament_selection(new_pop)
-                #print (parents)
-                self.best_ever = max(self.best_ever,best_ever)
-                self.chromosome_stack.pop()
-                self.timestep = 0
-                self.food_collected = 0                
-                if random.random() > 0.8:
-                    #self.best_ever
-                    self.best_ever = new_pop
-
 
     def on_agents(self,grid_value,environment):
         agent_objects = list(filter(lambda x : type(x).__name__ == 'Agent',environment.grid_objects[grid_value]))
@@ -498,12 +468,10 @@ class Agent:
             #self.food_unit = 1
 
     def deposite_food(self,environment):
-        if self.HAS_FOOD and 'GO_TO_NEST' in self.current_behaviors:
+        if self.HAS_FOOD:
             environment.fitness += 1
             self.DROP_FOOD = True
             self.HAS_FOOD = False
-            if self.genetic_mode:
-                self.food_collected += 1
             #eprint (self.name,self.location,self.food)
             ##Destroy food object
             del self.food
@@ -534,42 +502,7 @@ class Agent:
     def go_to_nest(self,environment):
         #print (environment.hub[self.hub].location)
         #self.move_behaviour = True
-        ##            def follow(self,environment):
-        if self.following is None:
-            list_agents = self.grid[list(self.grid.keys())[0]]
-            #list_agents = list_agents[1:]
-            #print (self.name,list_agents)
-            #print (len(list_agents)-1)
-            if len(list_agents) > 2:
-                #list_agents.remove(list_agents[0])
-                #choice_list = [a for a in list_agents if a != self]
-                #list_agents.pop(self)
-                #print (list_agents)
-                random_agent = np.random.choice(list_agents)
-                #print (self.name,random_agent)
-                if type(random_agent) is int or random_agent == self:
-                    self.following = None
-                else:
-                    self.following = random_agent
-                    #Information is flowed very fast
-                    if self.information:
-                        if 0.5 > np.random.random():
-                            random_agent.information = self.information
-                    if random_agent.information:
-                        if 0.5 > np.random.random():
-                            self.information = random_agent.information
-                    #if random_agent.information is not None:# and self.information is None:
-                    #    self.information = random_agent.information
-            
-        else:
-            #if self.name == 1:
-                #print (self.name,self.following.name)
-            self.direction = self.following.direction
-        
-        #pass
-        #if agent
-        #pass
-
+        ##        
         self.direction = get_direction(environment.hub[self.hub].location,self.location)
         if self.site:
             self.send_signals(environment)                        
@@ -600,39 +533,8 @@ class Agent:
         #pass
     
     ##These signals move with the agents.
-    ##These signals are distributed across some radi    def follow(self,environment):
-        if self.following is None:
-            list_agents = self.grid[list(self.grid.keys())[0]]
-            #list_agents = list_agents[1:]
-            #print (self.name,list_agents)
-            #print (len(list_agents)-1)
-            if len(list_agents) > 2:
-                #list_agents.remove(list_agents[0])
-                #choice_list = [a for a in list_agents if a != self]
-                #list_agents.pop(self)
-                #print (list_agents)
-                random_agent = np.random.choice(list_agents)
-                #print (self.name,random_agent)
-                if type(random_agent) is int or random_agent == self:
-                    self.following = None
-                else:
-                    self.following = random_agent
-                    #Information is flowed very fast
-                    if self.information:
-                        if 0.5 > np.random.random():
-                            random_agent.information = self.information
-                    if random_agent.information:
-                        if 0.5 > np.random.random():
-                            self.information = random_agent.information
-                    #if random_agent.information is not None:# and self.information is None:
-                    #    self.information = random_agent.information
-            
-        else:
-            #if self.name == 1:
-                #print (self.name,self.following.name)
-            self.direction = self.following.direction
-        
-
+    ##These signals are distributed across some radius within agents
+    ##What are the information that can be transferred through signal
     ##For now lets only broadcast, the site information, the direction it is headed
     def send_signals(self,environment):
         self.signal.grid = environment.get_adjcent_grid(self.location,environment.signal_radius)
@@ -677,6 +579,8 @@ class Agent:
         #environment.find_grid(self.location) 
     
     def update(self,environment):
+
+            
         if self.grid_change and None not in self.temp_grid.keys():
             #if self.grid != {'Default':[1]}:
             #environment.removeAgentGrid(list(self.grid.keys())[0],self)
@@ -689,4 +593,4 @@ class Agent:
             environment.grid_objects[list(self.grid.values())[0]].append(self)
             #environment.addAgentGrid(list(self.grid.keys())[0],self)
         self.environment_cue = None
-        self.environment_signal = None            
+        self.environment_signal = None

@@ -213,7 +213,7 @@ class swarm(base_ff):
         #Maximum food that can be collected from single source is 1000        
         #routine = ant.build_routine(code)
         #print (code,'Food eaten',ant.eaten)
-        print (food_collected)
+        print ('food collected',food_collected)
         return 1000/(food_collected)
 
 ##Parsing type

@@ -1,181 +1,281 @@
 import sys
 import os
 
-
-class Move:
-    def __init__(self,value,condition,orientation):
-        self.value = value
-        self.condition = condition
-        self.orientation = orientation
-        self.vocab_value = {'0' : 'RANDOM_WALK', 
-                            '1' : 'GO_TO_HUB', 
-                            '2' : 'GO_TO_SOURCE',
-                            '3' : 'FOLLOW_SIGNAL',
-                            '4' : 'FOLLOW_CUE',
-                            '5' : 'FOLLOW_OBJECT',
-                            '-' : 'DO_NOT_MOVE'
-                            }
-
-        self.vocab_condition = {
-                            0 : 'WANT_TO_GO_TO_HUB',
-                            1 : 'SOURCE_KNOWN',
-                            2 : 'SIGNAL_ACTIVE',
-                            3 : 'CUE_ACTIVE',
-                            4 : 'OBJECT_ACTIVE'
-                            }
-    
-        self.vocab_orientation = {
-                            '0' : 'AWAY',
-                            '1' : 'TOWARDS'
-                            }
-
-        self.move = self.vocab_value[self.value]
-        self.conditions = set()
-        for i in range(len(self.condition)):
-            if self.condition[i] == '1':
-                self.conditions.add((self.vocab_condition[i],True))
-            elif self.condition[i] == '0':
-                self.conditions.add((self.vocab_condition[i],False))                 
-        self.orientation = self.vocab_orientation[self.orientation]
-
+class Behavior(object):
+    def __init__(self,id):
+        self.id = id;
+        self.vocab = {0 : 'RANDOM_WALK', 
+                      1 : 'GO_TO_NEST', 
+                      2 : 'GO_TO_SOURCE',
+                      #3 : 'DROP_CUES',
+                      3 : 'PICK_CUES',
+                      #5 : 'SEND_SIGNALS',
+                      4 : 'RECEIVE_SIGNALS'
+                      };
+   
     def __str__(self):
-        #return self.vocab[self.id]
-        #return 'Conditions\n----------\n' + str(self.conditions + ,'move':self.move,'orientation':self.orientation
-        readable = '\n\n[Movement:]\n-----------\n[Conditions:]\n'
-        for a in self.conditions:
-            readable += '\n' + str(a)
-        readable += '\n\n[Move:]\n' + str(self.move)
-        readable += '\n\n[Orientation:]\n' + str(self.orientation)
-        return readable
-    
-    def to_engine(self):
-        return {'movement':{'conditions':self.conditions,'move':self.move,'orientation':self.orientation}}
+        return self.vocab[self.id];
     
     def __toLatex__(self):
-        return '$B_\mathit{' +self.vocab[self.id] +'}$'
+        return '$B_\mathit{' +self.vocab[self.id] +'}$';
   
     def __eq__(self, ob):
         if self.id == ob.id:
-            return True
+            return True;
         else:
-            return False
+            return False;
         
     def __hash__(self):
-        return self.id
+        return self.id;
 
-
-class Luggage:
-    def __init__(self,carry,drop):
-        self.carry = carry
-        self.drop = drop
-        #print (self.carry,self.drop)
-        #self.move = self.vocab_value[self.value]
-        self.carry_conditions = set()
-        self.drop_conditions = set()
-
-        self.carry_condition = { 0 : 'CARRIABLE_OBJECT',
-                                 1 : 'OBJECT_WEIGHT'
-                            }
-
-        self.drop_condition = { 0 : 'CARRYING_OBJECT',
-                                1 : 'ON_OTHER_OBJECT',
-                                2 : 'ON_OTHER_AGENT',
-                                3 : 'ON_NEST'
-                        }
-        self.carry_value = { '0' : 'NO_CARRY',
-        '1' : 'CARRY',
-        '-' : 'None'
-        }
-
-        self.drop_value = { '0' : 'DROP_ON_OTHER_OBJECT',
-                            '1' : 'DROP_ON_OTHER_AGENT',
-                            '2' : 'DROP_ON_NEST',
-                            '-' : 'None'
-        }
-
-        for i in range(len(self.carry[0])):
-            #print (self.carry[0][i])
-            if self.carry[0][i] == '1':
-               self.carry_conditions.add((self.carry_condition[i],True))               
-            elif self.carry[0][i] == '0':
-               self.carry_conditions.add((self.carry_condition[i],False))
-        self.carryval = self.carry_value[self.carry[1]]
-
-        for i in range(len(self.drop[0])):
-            #print (self.carry[0][i])
-            if self.drop[0][i] == '1':
-               self.drop_conditions.add((self.drop_condition[i],True))               
-            elif self.drop[0][i] == '0':
-               self.drop_conditions.add((self.drop_condition[i],False))
-        #print ('Drop value',self.drop_value[self.drop[1]])
-        self.dropval = self.drop_value[self.drop[1]]
-        #print (self.drop_conditions)
-
-
-    def __str__(self):
-        #return self.vocab[self.id]
-        #return 'Conditions\n----------\n' + str(self.conditions + ,'move':self.move,'orientation':self.orientation
-        readable = '[Luggage:]\n-----------'
-        readable += '\n[Carry:]\n'
-        #print (self.carry[1])
-        readable += self.carry_value[self.carry[1]]
-        #print (self.carry_conditions)
-        #print (self.drop_conditions)
-        readable += '\n\n[Conditions:]'
-        for a in self.carry_conditions:
-            readable += '\n' + str(a)
-        readable += '\n\n[Drop:]\n'
-        readable += self.drop_value[self.drop[1]]        
-        readable += '\n\n[Conditions:]'        
-        for a in self.drop_conditions:
-            readable += '\n' + str(a)
-        #print (readable)        
-        #readable += '\n\nMove\n-----------\n' + str(self.move)
-        #readable += '\n\nOrientation\n---------\n' + str(self.orientation)
-        return readable
+class InternalState(object):
+    motivationalStateList = { 'STAY_UP_MOTIVATION', 'STAY_DOWN_MOTIVATION' };
     
-    def to_engine(self):
-        #return 'ttt'
-        return {'luggage':{'drop':(self.drop_conditions,self.dropval),'carry':(self.carry_conditions,self.carryval)}}
+    def __init__(self,id):
+        self.id = id;
+        self.vocab = {1 : 'DROP_FOOD',
+                      #2 : 'STAY_DOWN_MOTIVATION',
+                      #3 : 'STAY_UP_MOTIVATION',
+                      2 : 'WANT_FOOD'};
+                      #5 : 'STAY_DOWN',
+                      #6 : 'STAY_UP'};
+    
+    def __str__(self):
+        return self.vocab[self.id];
+    
+    def __eq__(self, ob):
+        if self.id == ob.id:
+            return True;
+        else:
+            return False;
+        
+    def __hash__(self):
+        return self.id;
+
+class Precondition(object):
+    motivationalStateList = { 'STAY_UP', 'STAY_DOWN' };
+    def __init__(self,id,value):
+        self.id = id;
+        self.value = value;
+        self.vocab = {0 : 'HAS_FOOD', 
+                      1 : 'ON_NEST', 
+                      #2 : 'ON_GRASS',
+                      2 : 'ON_SOURCE',
+                      #4 : 'GOT_STUCK',
+                      #5 : 'STAY_UP',
+                      #6 : 'SAW_RED',
+                      #7 : 'ON_SLOPE',
+                      #8 : 'STAY_DOWN',
+                      3 : 'DROP_FOOD',
+                      #5 : 'DROP_FOOD',
+                      #10 : 'NO_PRECONDITION',
+                      #6 : 'NO_PRECONDITION',
+                      #11 : 'GIONNI_TP',
+                      #12 : 'WANT_FOOD'};
+                      4 : 'WANT_FOOD',
+                      5 : 'ON_SIGNALS',
+                      6 : 'ON_CUE'
+                      #5 : 'SEND_SIGNALS',
+                      #6 : 'RECEIVE_SIGNALS',
+                      #7: 'PUT_CUES',
+                      #8: 'GET_CUES'
+                      };  
+
+        self.splitsymbol = None
+    def __str__(self):
+        strResult = self.vocab[self.id];
+        if self.vocab[self.id] in Precondition.motivationalStateList:
+            #print str(self.value);
+            if self.value == True:
+                strResult += ' > 0.5';
+                self.splitsymbol = ' > '
+            else:
+                strResult += ' <= 0.5';
+                self.splitsymbol = ' <= '
+        else:
+            strResult += ' is ' + str(self.value);
+            self.splitsymbol = ' is '
+        return strResult;
+    
+    def __toLatex__(self):
+        strResult = '$P_\mathit{' +self.vocab[self.id] +'}';
+        if self.vocab[self.id] in Precondition.motivationalStateList:
+            if self.value == True:
+                strResult += ' > 0.5$';
+            else:
+                strResult += ' <= 0.5$';
+        else:
+            strResult += ' == ' + str(self.value) + '$';
+        return strResult;
+    
+    def __eq__(self, ob):
+        if self.id == ob.id and self.value == ob.value:
+            return True;
+        else:
+            return False;
+    def __hash__(self):
+        return self.__str__().__hash__();
+        
+class Action(object):
+    def __init__(self,type,prob):
+        self.type = type;
+        self.prob = prob;
+        self.typeVocab = {0 : 'DO_NOTHING',
+                          1 : 'CHANGE_BEHAVIOR',
+                          2 : 'SET_INTERNAL_VARIABLE'};
+                          
+    def __str__(self):
+        return 'Action type: ' + self.typeVocab[self.type] + ' with p = ' + str(self.prob);
+    
+    def __eq__(self, ob):
+        if self.type == ob.type and self.prob == ob.prob:
+            return True;
+        else:
+            return False;
+        
+    def __hash__(self):
+        return self.__str__().__hash__();
+        
+class BehaviorAction(Action):
+    def __init__(self,prob,behavior):
+        super(BehaviorAction,self).__init__(1,prob);
+        self.newBehavior = behavior;
+        
+    def __str__(self):
+        return 'AB: With p = ' + str(self.prob) + ' change behavior to ' + str(self.newBehavior);
+        #return 
+    
+    def __toLatex__(self):
+        return '$A_\\mathit{B}$ & $p=' + str(self.prob) + '$ & $B_\\mathit{'+str(self.newBehavior)+'}$\\\\\n';
+    
+    def __eq__(self,ob):
+        if isinstance(ob, self.__class__):
+            return super(BehaviorAction,self).__eq__(ob) and self.newBehavior == ob.newBehavior;
+        else:
+            return False;
+    def __sameButProbability__(self,ob):
+        if isinstance(ob,self.__class__):
+            return self.newBehavior == ob.newBehavior;
+        else:
+            return False;
+    
+    def __manual__(self):
+        #return {'AB':(self.prob,str(self.newBehavior))}
+        return ('AB',self.prob,str(self.newBehavior))
+    
+class ISAction(Action):
+    def __init__(self,prob,istate,value):
+        super(ISAction,self).__init__(2,prob);
+        self.istate = istate;
+        self.value = value;
+        self.increase = 0
+        self.change = None
+
+    def __toLatex__(self):
+        strResult = '$A_\\mathit{IS}$ & $p=' + str(self.prob) + '$ & $IS_\\mathit{'+str(self.istate)+'}';
+        if str(self.istate) in self.istate.motivationalStateList:
+            if self.value == True:
+                #strResult += '+= 0.05';
+                strResult += '+';  
+            else:
+                #strResult += '-= 0.05';
+                strResult += '-';
+        else:
+            #strResult += '';
+            strResult += '\\leftarrow \\mathit{' + str(self.value) + '}$';
+        strResult += '\\\\\n';
+        return strResult
+        
+    def __str__(self):
+        strResult = 'AIS: With p  = ' + str(self.prob);
+        if str(self.istate) in self.istate.motivationalStateList:
+            if self.value == True:
+                strResult += ' increase internal state ' + str(self.istate) + ' by 0.05 ';
+                self.increase = +1
+                self.change = 0.05
+            else:
+                strResult += ' decrease internal state ' + str(self.istate) + ' by 0.05 ';
+                self.increase = -1
+                self.change = 0.05
+        else:
+            strResult += ' change internal state ' + str(self.istate) + ' to ' + str(self.value);
+            self.increase = 0
+            self.change = str(self.value)
+        return strResult;
+    
+    def __eq__(self,ob):
+        if isinstance(ob,self.__class__):
+            return super(ISAction,self).__eq__(ob) and self.istate == ob.istate and self.value == ob.value;
+        else:
+            return False;
+    def __sameButProbability__(self,ob):
+        if isinstance(ob,self.__class__):
+            return self.istate == ob.istate and self.value == ob.value;
+        else:
+            return False;
+
+    def __manual__(self):
+        #return {'AIS':[self.prob,self.increase,str(self.istate),0.05]}
+        return ('AIS',self.prob,self.increase,str(self.istate),self.change)
 
 class Rule(object):
     def __init__(self):
-        self.luggage = None
-        self.movement = None
-        self.communication = None
-        self.explanation = ''
+        self.behaviors = set();
+        self.preconditions = set();
+        self.actions = list();
+        self.explanation = '';
         self.rule_json = None
 
     def __str__(self):
-        strResult = ''
-        return str(self.luggage) + str(self.movement)
-        #print ('hello')
-        #for len
-
+        strResult = '';
+        strResult += '[Behaviors:]\n';
+        behavior = set()
+        #behavior['behaviors'] = []
+        precond1 = set()
+        #precond1['preconditions'] = []
+        act = set()
+        #act['actions'] = []
+        for behave in self.behaviors:
+            behavior.add(str(behave))
+            strResult += str(behave) + '\n';
+        strResult += '[Preconditions:]\n';
+        for precond in self.preconditions:
+            strResult += str(precond) + '\n';
+            #temp = str(precond).split(precond.splitsymbol)
+            temp = str(precond).split(' ')
+            #print (temp)
+            precond1.add(tuple(temp))            
+        strResult += '[Actions:]\n';
+        for action in self.actions:
+            strResult += str(action) + '\n';
+            act.add(action.__manual__())
+        self.rule_json = [behavior,precond1,act]
+        return strResult;
+    
     def __manual__(self):
-        return (self.luggage.to_engine(),self.movement.to_engine())
+        return self.rule_json
 
     def __simplifyActions__(self):
-        done = False
+        done = False;
         while not done:
-            act1ToRemove = None
-            act2ToRemove = None
+            act1ToRemove = None;
+            act2ToRemove = None;
             foundOne = False
             for action1 in self.actions:
                 if foundOne:
-                    break
+                    break;
                 for action2 in self.actions:
                     if not action1 is action2 and action1.__sameButProbability__(action2):
-                        act1ToRemove = action1
-                        act2ToRemove = action2
-                        done = False
-                        foundOne = True
-                        break
+                        act1ToRemove = action1;
+                        act2ToRemove = action2;
+                        done = False;
+                        foundOne = True;
+                        break;
             if foundOne:
-                #print('Modifying action: '+ str(act1ToRemove))
-                act1ToRemove.prob = 1 - ((1 - act1ToRemove.prob) * (1 - act2ToRemove.prob))
-                #print('New action: '+ str(act1ToRemove))
-                #print('Removing action: '+ str(act2ToRemove))
-                self.actions.remove(act2ToRemove)
+                #print('Modifying action: '+ str(act1ToRemove));
+                act1ToRemove.prob = 1 - ((1 - act1ToRemove.prob) * (1 - act2ToRemove.prob));
+                #print('New action: '+ str(act1ToRemove));
+                #print('Removing action: '+ str(act2ToRemove));
+                self.actions.remove(act2ToRemove);
             else:
-                done = True
+                done = True;

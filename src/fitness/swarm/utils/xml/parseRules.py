@@ -28,7 +28,7 @@ class ParseRules:
 
 
     def convert(self):
-        ruleSet = set();
+        ruleSet = [];
         if self.xmlstring is not None:
             #print ("From parseRules",self.xmlstring)
             tree = ET.fromstring(self.xmlstring)
@@ -37,68 +37,75 @@ class ParseRules:
             tree = ET.parse(self.rules_filename);
             root = tree.getroot();            
         #print (tree)
-        state_cnt = 0
         for ruleElement in root:
-            if ruleElement.tag == 'state':
-                rule = GESwarm.Rule()
-                state = ruleElement.find('state1')
-                #print ('State',state_cnt)
-                #print ('---------------')
-                ##Parsing Luggage Values
-                luggage = state.find('luggage')
-                #print (state.find('luggage').text)
-                carry = luggage.find('carry1')                
-                drop = luggage.find('drop1')    
-                drop_condition =  drop.find('condition').text
-                drop_value =  drop.find('value').text                
-                carry_condition =  carry.find('condition').text
-                carry_value =  carry.find('value').text                                
-                #print (carry_condition,carry_value)
-                carry = (carry_condition,carry_value)
-                drop = (drop_condition,drop_value)
-                luggage = GESwarm.Luggage(carry,drop)
-                #print (luggage)
-                rule.luggage = luggage
-                #print (luggage.to_engine())                
-                #exit()
-                ##Parsing Movement values
-                movement = state.find('movement')
-                m_condition = movement.find('condition').text 
-                m_value = movement.find('value').text
-                m_orientation = movement.find('orientation').text                
-                #print ('M',m_condition,m_value,m_orientation)                  
-                movement = GESwarm.Move(m_value,m_condition,m_orientation)
-                rule.movement = movement
-                #print (movement)
-                #print (movement.to_engine())
-                #print (luggage,movement)
-                #print (movement)
-                #print ('---------------\n\n')   
-                state_cnt += 1  
-                ruleSet.add(rule)
-        #i = 0;
+            if ruleElement.tag == 'rule':
+                rule = GESwarm.Rule();
+                for prvStateElement in ruleElement.find('previous_states'):
+                    prvStateId = prvStateElement.get('id');
+                    behavior = GESwarm.Behavior(int(prvStateId));
+                    rule.behaviors.add(behavior);
+                for precondElement in ruleElement.find('preconditions'):
+                    precondId = precondElement.get('id');
+                    precondValue = precondElement.get('value');
+                    boolPrecond = True if precondValue == 'true' else False;
+                    #print (precondId,precondValue,boolPrecond)
+                    i=0
+                    #print (precondId)
+                    for bit in precondId:
+                        #print (bit)
+                        if bit == '1':
+                            precondition = GESwarm.Precondition(i,True);
+                            #print (precondition)
+                            rule.preconditions.add(precondition);                            
+                        elif bit == '0':
+                            precondition = GESwarm.Precondition(i,False);
+                            rule.preconditions.add(precondition);
+                        i +=1
+                        #elif bit == '-':
+
+                for actionElement in ruleElement.find('actions'):
+                    actType = actionElement.get('type');
+                    actProb = actionElement.get('prob');
+                    #print (actType)
+                    if actType == '1':
+                        nextBehaviorId = actionElement.get('nxt_state_id');
+                        action = GESwarm.BehaviorAction(float(actProb),GESwarm.Behavior(int(nextBehaviorId)));
+                        rule.actions.append(action);
+                    elif actType == '2':
+                        isId = actionElement.get('variable_id')
+                        isValue = actionElement.get('value')
+                        boolISPrecond = True if isValue == 'true' else False;
+                        action = GESwarm.ISAction(float(actProb),GESwarm.InternalState(int(isId)),boolISPrecond);
+                        rule.actions.append(action);
+                    else:
+                        print ('Error! Invalid action type!')
+                explainElement = ruleElement.find('explain')
+                if explainElement != None:
+                    rule.explanation = explainElement.text
+                ruleSet.append(rule);
+        i = 0;
         rules_json = []
         for rule in ruleSet:
-            #i+=1;
+            i+=1;
             #print('[RULE '+str(i) + '] of RuleSet [' + fileName +'] Simplification:');
-            #rule.__simplifyActions__();
+            rule.__simplifyActions__();
+            #print (rule)
+            str(rule)
             rules_json.append(rule.__manual__())
-            #str(rule)
-            #rules_json.append(rule.__manual__())
 
         if self.xmlstring is None:
             Conv.convertToText(self.rules_filename, ruleSet);
         else:
-            Conv.convertToText("testing.xml", ruleSet);    
+            Conv.convertToText("handcoded1.xml", ruleSet);
+            
         #Conv.convertToLatex(ROOT_DIR,self.rules_filename,ruleSet);
         #print (rules_json)
-
         return rules_json        
         
 
 
 if __name__=='__main__':
-    rules = ParseRules(os.path.join(ROOT_DIR, "new_rules.xml"))
+    rules = ParseRules(os.path.join(ROOT_DIR, "test_rules.xml"))
     #Conv.convertToText(ROOT_DIR,)
     print (rules.convert())
 
