@@ -28,7 +28,7 @@ class swarm(base_ff):
 
     def evaluate(self, ind, **kwargs):
         code = ind.phenotype
-        code = '''<?xml version="1.0" encoding="UTF-8"?>
+        code1 = '''<?xml version="1.0" encoding="UTF-8"?>
 <rulebase>
 
   <rule>
@@ -127,7 +127,7 @@ class swarm(base_ff):
       <prv_state id="2" />
     </previous_states>
     <preconditions>
-      <precond id="00-----" value="false" />
+      <precond id="00-----" value="false" />5
     </preconditions>
     <actions>
       <act1 type="1" prob="0.1" nxt_state_id="2" />
@@ -206,14 +206,14 @@ class swarm(base_ff):
         #print (env.rules_stream)
         env.build_json_environment()
         #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
-        env.add_agents(500)
+        env.add_agents(150)
         #first_agent = np.random.choice(env.agents)
         #first_agent.information = True
         food_collected = env.simulator(1) 
         #Maximum food that can be collected from single source is 1000        
         #routine = ant.build_routine(code)
         #print (code,'Food eaten',ant.eaten)
-        print ('food collected',food_collected)
+        #print ('food collected',food_collected)
         return 1000/(food_collected)
 
 ##Parsing type

@@ -501,11 +501,11 @@ class Environment:
 
     def simulator(self,epoch):
         self.frames_per_sec = 120
-        ticks = 100000
+        ticks = 70000
         while ticks/len(self.agents) > 50 :
             self.looper()
             ticks -= len(self.agents)
-        eprint (int(self.fitness))
+        #eprint (int(self.fitness))
         return int(self.fitness)
         
     def to_json(self):
@@ -547,7 +547,7 @@ def main(epoch):
     #print (env.grid)
     env.build_json_environment()
     #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
-    env.add_agents(100)
+    env.add_agents(150)
     #first_agent = np.random.choice(env.agents)
     #first_agent.information = True
     env.simulator(epoch)
