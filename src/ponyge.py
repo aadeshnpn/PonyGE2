@@ -24,7 +24,12 @@ def mane():
 
     # Print final review
     get_stats(individuals, end=True)
+    from datetime import datetime
 
+    
+    if not params['SILENT']:
+        end = datetime.now()
+        print("\nEnd:\t", end, "\n")    
 
 if __name__ == "__main__":
     set_params(sys.argv[1:])  # exclude the ponyge.py arg itself

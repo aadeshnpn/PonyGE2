@@ -25,6 +25,7 @@ class santa_fe_trail(base_ff):
         
         # Set target string.
         self.target = params['TARGET']
+        self.maximise = True
 
     def evaluate(self, ind, **kwargs):
         ant = AntSimulator(600)
@@ -32,7 +33,8 @@ class santa_fe_trail(base_ff):
         routine = ant.build_routine(code)
         ant.run(routine)
         #print (code,'Food eaten',ant.eaten)
-        return 90.0/(ant.eaten+1)
+        #return 90.0/(ant.eaten+1)
+        return ant.eaten
 
 ##Parsing type
 
