@@ -28,6 +28,179 @@ class swarm(base_ff):
 
     def evaluate(self, ind, **kwargs):
         code = ind.phenotype
+        code = '''<?xml version="1.0" encoding="UTF-8"?>
+<rulebase>
+
+  <rule>
+    <previous_states>
+      <prv_state id="0" />
+    </previous_states>
+    <preconditions>
+      <precond id="-01-1--" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="1" />
+      <act2 type="2" prob="0.025" variable_id="2" value="false" />
+    </actions>
+  </rule>
+
+ <rule>
+    <previous_states>
+      <prv_state id="0" />
+    </previous_states>
+    <preconditions>
+      <precond id="0-0---1" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="3" />
+      <act2 type="2" prob="0.025" variable_id="2" value="true" />
+    </actions>
+  </rule>
+
+ <rule>
+    <previous_states>
+      <prv_state id="0" />
+    </previous_states>
+    <preconditions>
+      <precond id="0-0--1-" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="4" />
+      <act2 type="2" prob="0.025" variable_id="2" value="true" />
+    </actions>
+  </rule>
+
+ <rule>
+    <previous_states>
+      <prv_state id="0" />
+    </previous_states>
+    <preconditions>
+      <precond id="0-0--0-" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="0" />
+      <act2 type="2" prob="0.025" variable_id="2" value="true" />
+    </actions>
+  </rule>
+
+ <rule>
+    <previous_states>
+      <prv_state id="0" />
+    </previous_states>
+    <preconditions>
+      <precond id="0-0---0" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="0" />
+      <act2 type="2" prob="0.025" variable_id="2" value="true" />
+    </actions>
+  </rule>
+
+  <rule>
+    <previous_states>
+      <prv_state id="1" />
+    </previous_states>
+    <preconditions>
+      <precond id="01-----" value="false" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="2" />
+      <act2 type="2" prob="1.0" variable_id="1" value="true" />
+    </actions>
+  </rule>
+
+  <rule>
+    <previous_states>
+      <prv_state id="1" />
+    </previous_states>
+    <preconditions>
+      <precond id="10-----" value="false" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="1" />
+      <act2 type="2" prob="0.05" variable_id="1" value="true" />
+    </actions>
+  </rule>
+
+  <rule>
+    <previous_states>
+      <prv_state id="2" />
+    </previous_states>
+    <preconditions>
+      <precond id="00-----" value="false" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.1" nxt_state_id="2" />
+      <act2 type="2" prob="0.075" variable_id="2" value="true" />
+    </actions>
+  </rule>
+  
+<rule>
+    <previous_states>
+      <prv_state id="2" />
+    </previous_states>
+    <preconditions>
+      <precond id="1-1----" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="1" />
+      <act2 type="2" prob="0.01" variable_id="2" value="false" />
+    </actions>
+  </rule>
+ 
+<rule>
+    <previous_states>
+      <prv_state id="3" />
+    </previous_states>
+    <preconditions>
+      <precond id="--1----" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="1" />
+      <act2 type="2" prob="0.01" variable_id="2" value="false" />
+    </actions>
+  </rule>
+
+<rule>
+    <previous_states>
+      <prv_state id="3" />
+    </previous_states>
+    <preconditions>
+      <precond id="--0----" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="0" />
+      <act2 type="2" prob="0.01" variable_id="2" value="false" />
+    </actions>
+  </rule>
+
+<rule>
+    <previous_states>
+      <prv_state id="4" />
+    </previous_states>
+    <preconditions>
+      <precond id="--1----" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="1" />
+      <act2 type="2" prob="0.01" variable_id="2" value="false" />
+    </actions>
+  </rule>
+
+<rule>
+    <previous_states>
+      <prv_state id="4" />
+    </previous_states>
+    <preconditions>
+      <precond id="--0----" value="true" />
+    </preconditions>
+    <actions>
+      <act1 type="1" prob="0.99" nxt_state_id="0" />
+      <act2 type="2" prob="0.01" variable_id="2" value="false" />
+    </actions>
+  </rule>
+</rulebase>        
+        '''
         #print (code)        
         env = Environment(rules_stream=code)
         #print (env.rules_stream)
@@ -40,6 +213,7 @@ class swarm(base_ff):
         #Maximum food that can be collected from single source is 1000        
         #routine = ant.build_routine(code)
         #print (code,'Food eaten',ant.eaten)
+        print (food_collected)
         return 1000/(food_collected)
 
 ##Parsing type
