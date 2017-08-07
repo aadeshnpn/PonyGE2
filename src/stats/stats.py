@@ -136,6 +136,7 @@ def get_soo_stats(individuals, end):
     if not params['DEBUG']:
 
         if stats['gen'] == 0:
+            #print ('From save headers')
             save_stats_headers(stats)
 
         save_stats_to_file(stats, end)
