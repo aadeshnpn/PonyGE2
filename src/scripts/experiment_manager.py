@@ -14,6 +14,8 @@ from multiprocessing import Pool
 from subprocess import call
 import sys
 
+from joblib import Parallel, delayed
+
 from algorithm.parameters import params, set_params
 from scripts.stats_parser import parse_stats_from_runs
 
@@ -39,20 +41,24 @@ def execute_runs():
     """
 
     # Initialise empty list of results.
-    results = []
+    #results = []
+
+
 
     # Initialise pool of workers.
-    pool = Pool(processes=params['CORES'])
+    #pool = Pool(processes=params['CORES'])
 
-    for run in range(params['RUNS']):
+    Parallel(n_jobs=params['CORES'])(delayed(execute_run)(run) for run in range(params['RUNS']))
+
+    #for run in range(params['RUNS']):
         # Execute a single evolutionary run.
-        results.append(pool.apply_async(execute_run, (run,)))
+    #    results.append(pool.apply_async(execute_run, (run,)))
 
-    for result in results:
-        result.get()
+    #for result in results:
+    #    result.get()
 
     # Close pool once runs are finished.
-    pool.close()
+    #pool.close()
 
 
 def check_params():
