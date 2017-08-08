@@ -27,7 +27,7 @@ def execute_run(seed):
     :return: Nothing.
     """
 
-    exec_str = "python3 ponyge.py " \
+    exec_str = "python ponyge.py " \
                "--random_seed " + str(seed) + " " + " ".join(sys.argv[1:])
 
     call(exec_str, shell=True)
@@ -49,6 +49,8 @@ def execute_runs():
     #pool = Pool(processes=params['CORES'])
 
     Parallel(n_jobs=params['CORES'])(delayed(execute_run)(run) for run in range(params['RUNS']))
+    #for run in range(params['RUNS']):
+    #    execute_run(run)
 
     #for run in range(params['RUNS']):
         # Execute a single evolutionary run.
