@@ -11,7 +11,7 @@ INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         17
 MUTATION:               int_flip_per_codon
-POPULATION_SIZE:        500
+POPULATION_SIZE:	600
 FITNESS_FUNCTION:       string_match
 REPLACEMENT:            generational
 SELECTION:              tournament

@@ -85,7 +85,6 @@ def get_soo_stats(individuals, end):
     :param end: Boolean flag for indicating the end of an evolutionary run.
     :return: Nothing.
     """
-
     # Get best individual.
     best = max(individuals)
 
@@ -136,8 +135,8 @@ def get_soo_stats(individuals, end):
     if not params['DEBUG']:
 
         if stats['gen'] == 0:
-            #print ('From save headers')
             save_stats_headers(stats)
+
 
         save_stats_to_file(stats, end)
 
@@ -264,7 +263,7 @@ def get_moo_stats(individuals, end):
 
         if stats['gen'] == 0:
             save_stats_headers(stats)
-
+        
         save_stats_to_file(stats, end)
 
         if params['SAVE_ALL']:

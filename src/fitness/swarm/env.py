@@ -501,7 +501,7 @@ class Environment:
 
     def simulator(self,epoch):
         self.frames_per_sec = 120
-        ticks = 70000
+        ticks = 30000
         while ticks/len(self.agents) > 50 :
             self.looper()
             ticks -= len(self.agents)

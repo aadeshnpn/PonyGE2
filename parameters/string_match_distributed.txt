@@ -20,7 +20,7 @@ TARGET:                 Golden!
 TOURNAMENT_SIZE:        2
 VERBOSE:                False
 MULTIAGENT:             True
-AGENT_SIZE:             200
+AGENT_SIZE:		600
 INTERACTION_PROBABILITY:0.7
 SEARCH_LOOP:            search_loop
 STEP:                   step

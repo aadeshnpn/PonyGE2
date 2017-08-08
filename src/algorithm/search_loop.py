@@ -31,6 +31,8 @@ def search_loop():
     # Generate statistics for run so far
     get_stats(individuals)
 
+    #print (stats)
+    #exit()
     #print ('stats generation one value',stats['gen'])
     #exit()
     # Traditional GE

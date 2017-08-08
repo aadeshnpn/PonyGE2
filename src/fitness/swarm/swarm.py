@@ -206,7 +206,7 @@ class swarm(base_ff):
         #print (env.rules_stream)
         env.build_json_environment()
         #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
-        env.add_agents(150)
+        env.add_agents(90)
         #first_agent = np.random.choice(env.agents)
         #first_agent.information = True
         food_collected = env.simulator(1) 

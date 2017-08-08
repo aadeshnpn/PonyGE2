@@ -78,9 +78,6 @@ class Agent():
             # Replace the old population with the new population.
             individuals = replacement(new_pop, individuals)
 
-            # Generate statistics for run so far
-            get_stats(individuals)
-
             # Sort the individuals list based on the fitness objective
             if params['FITNESS_FUNCTION'].maximise:
                 individuals.sort(reverse=False)

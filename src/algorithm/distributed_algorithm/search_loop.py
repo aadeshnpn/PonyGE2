@@ -20,16 +20,13 @@ def search_loop():
     """
     This loop is used when the multiagent parameter is passed
     """
-    #print ('stats generation one value',stats['gen'])
-    #exit()
+
     # Create a list of agents based on the paramater passed
     agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
 
     # Collect individual state for the first time
     get_stats(individuals_from_agents(agents))
 
-    #print ('stats generation one value',stats['gen'])
-    #exit()
     ##Multi-Agent based GE
     for generation in range(1,(params['GENERATIONS']+1)):
         stats['gen'] = generation
