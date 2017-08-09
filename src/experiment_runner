@@ -7,8 +7,11 @@ current_loc=/home/aadeshnpn/Documents/BYU/hcmi/swarm_simulator/ponydge
 #s_parameter_file_name=('string_match' 'regression' 'santa_fe_trail' 'swarm')
 #m_parameter_file_name=('string_match_distributed' 'regression_distributed' 'santa_fe_trail_distributed' 'swarm_distributed')
 
-s_parameter_file_name=('string_match' 'regression' 'santa_fe_trail')
-m_parameter_file_name=('string_match_distributed' 'regression_distributed')
+#s_parameter_file_name=('string_match' 'regression' 'santa_fe_trail')
+#m_parameter_file_name=('string_match_distributed' 'regression_distributed')
+
+s_parameter_file_name=('santa_fe_trail')
+m_parameter_file_name=('santa_fe_trail_distributed')
 
 standard()
 {

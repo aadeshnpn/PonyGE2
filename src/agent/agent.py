@@ -79,10 +79,10 @@ class Agent():
             individuals = replacement(new_pop, individuals)
 
             # Sort the individuals list based on the fitness objective
-            if params['FITNESS_FUNCTION'].maximise:
-                individuals.sort(reverse=False)
-            else:
-                individuals.sort(reverse=True)
+            #if params['FITNESS_FUNCTION'].maximise:
+            #    individuals.sort(reverse=False)
+            #else:
+            individuals.sort(reverse=True)
 
             # Get the higest performing individual from the sorted population 
             self.new_individual = individuals[0]

@@ -184,6 +184,7 @@ def parse_stats_from_runs(experiment_name):
             
             # Append Stat to header.
             header = header + stat + "_mean,"
+            np.seterr(over='ignore')
             
             summary_stats_mean = np.nanmean(summary_stats, axis=0)
             full_stats.append(summary_stats_mean)

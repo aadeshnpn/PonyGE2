@@ -3,7 +3,7 @@ CODON_SIZE:             100
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.25
 DEBUG:                  False
-GENERATIONS:	35
+GENERATIONS:	40
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           letter.bnf
 INITIALISATION:         uniform_tree
@@ -20,5 +20,5 @@ TARGET:                 Golden!
 TOURNAMENT_SIZE:        2
 VERBOSE:                False
 MULTIAGENT:             True
-AGENT_SIZE:		300
+AGENT_SIZE:		900
 INTERACTION_PROBABILITY:0.7
