@@ -1,9 +1,9 @@
 CACHE:                  True
 CODON_SIZE:             1000000
 CROSSOVER:              variable_onepoint
-CROSSOVER_PROBABILITY:  0.75
+CROSSOVER_PROBABILITY:  0.9
 DEBUG:                  False
-GENERATIONS:            80
+GENERATIONS:            20
 MAX_GENOME_LENGTH:      5000
 GRAMMAR_FILE:           swarm.bnf
 INITIALISATION:         uniform_tree
@@ -20,4 +20,4 @@ TOURNAMENT_SIZE:        5
 VERBOSE:                False
 MULTIAGENT:             True
 AGENT_SIZE:             500
-INTERACTION_PROBABILITY:0.7
+INTERACTION_PROBABILITY:0.9
