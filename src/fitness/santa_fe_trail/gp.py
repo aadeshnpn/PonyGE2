@@ -500,6 +500,10 @@ class AntSimulator(object):
         self.routine = None
         self.sample_freq_fe = N
         self.ss_foodeaten = np.zeros(int(self.max_moves/self.sample_freq_fe))
+        ##Since sklearn can't computer knn for 3 dimension convert the below matrix
+        #self.foodeaten_sequence = np.zeros((89,2))
+        self.foodeaten_sequence = np.zeros(89)
+        self.foodeaten_id = 0        
         self.load_trail()
 
     def _reset(self):
@@ -510,6 +514,8 @@ class AntSimulator(object):
         self.moves = 0  
         self.eaten = 0
         self.ss_foodeaten = np.zeros(int(self.max_moves/self.sample_freq_fe))
+        self.foodeaten_sequence = np.zeros(89)        
+        self.foodeaten_id = 0
         self.matrix_exc = copy.deepcopy(self.matrix)
 
     @property
@@ -535,8 +541,16 @@ class AntSimulator(object):
             self.col = (self.col + self.dir_col[self.dir]) % self.matrix_col
             if self.matrix_exc[self.row][self.col] == "food":
                 self.eaten += 1
+                #self.foodeaten_sequence[self.foodeaten_id] = np.array([self.row,self.col])
+                self.foodeaten_sequence[self.foodeaten_id] = int(self.paring_function(self.row+1,self.col+1))
+                self.foodeaten_id += 1
             self.matrix_exc[self.row][self.col] = "passed"
             self.sample_foodeaten()
+
+    def paring_function(self,x,y):
+        pair = (((x+y)*(x+y+1))/2)+y
+        #print('pf',x,y,pair)        
+        return pair
 
     def sense_food(self):
         ahead_row = (self.row + self.dir_row[self.dir]) % self.matrix_row

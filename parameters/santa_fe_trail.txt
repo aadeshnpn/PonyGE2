@@ -1,9 +1,9 @@
-CACHE:                  True
+CACHE:                  False
 CODON_SIZE:             10000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.9
 DEBUG:                  False
-GENERATIONS:	        100
+GENERATIONS:	        200
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           santa_fe_trail.bnf
 #INITIALISATION:         PI_grow

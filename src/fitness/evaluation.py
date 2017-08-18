@@ -136,11 +136,24 @@ def eval_or_append(ind, results, pool):
 
 
 def evaluate_novelty(individuals):
+    return evaluate_novelty_foodeaten_sequence(individuals)
+
+def evaluate_novelty_foodeaten(individuals):
+    ##First Part from the paper which considers foodeaten samples
     list_sample_foodeaten = np.array([indi.sample_foodeaten for indi in individuals])
     kdt = KDTree(list_sample_foodeaten,leaf_size=40,metric='euclidean')
     dist,ind = kdt.query(list_sample_foodeaten,k=25)
     sparseness = dist.mean(axis=1)
     for id in range(len(individuals)):
         individuals[id].fitness = sparseness[id]
-    
+    return individuals
+
+def evaluate_novelty_foodeaten_sequence(individuals):
+    ##Second Part from the paper which considers sequence or co-ordinates of food eaten
+    list_foodeaten_sequence = np.array([indi.foodeaten_sequence for indi in individuals])
+    kdt = KDTree(list_foodeaten_sequence,leaf_size=40,metric='euclidean')
+    dist,ind = kdt.query(list_foodeaten_sequence,k=25)
+    sparseness = dist.mean(axis=1)
+    for id in range(len(individuals)):
+        individuals[id].fitness = sparseness[id]
     return individuals
