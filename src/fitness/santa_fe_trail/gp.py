@@ -27,6 +27,7 @@ import math
 import re
 import sys
 import warnings
+import numpy as np
 
 from collections import defaultdict, deque
 from functools import partial, wraps
@@ -492,11 +493,13 @@ class AntSimulator(object):
     dir_row = [1, 0, -1, 0]
     dir_col = [0, 1, 0, -1]
     
-    def __init__(self, max_moves):
+    def __init__(self, max_moves, N=30):
         self.max_moves = max_moves
         self.moves = 0
         self.eaten = 0
         self.routine = None
+        self.sample_freq_fe = N
+        self.ss_foodeaten = np.zeros(self.sample_freq_fe)  
         self.load_trail()
 
     def _reset(self):
@@ -506,6 +509,7 @@ class AntSimulator(object):
         self.dir = 1
         self.moves = 0  
         self.eaten = 0
+        self.ss_foodeaten = np.zeros(self.sample_freq_fe)
         self.matrix_exc = copy.deepcopy(self.matrix)
 
     @property
@@ -516,11 +520,13 @@ class AntSimulator(object):
         if self.moves < self.max_moves:
             self.moves += 1
             self.dir = (self.dir - 1) % 4
+            self.sample_foodeaten()
 
     def right(self):
         if self.moves < self.max_moves:
             self.moves += 1    
             self.dir = (self.dir + 1) % 4
+            self.sample_foodeaten()
         
     def move(self):
         if self.moves < self.max_moves:
@@ -530,6 +536,7 @@ class AntSimulator(object):
             if self.matrix_exc[self.row][self.col] == "food":
                 self.eaten += 1
             self.matrix_exc[self.row][self.col] = "passed"
+            self.sample_foodeaten()
 
     def sense_food(self):
         ahead_row = (self.row + self.dir_row[self.dir]) % self.matrix_row
@@ -539,16 +546,14 @@ class AntSimulator(object):
     def if_food_ahead(self, out1, out2):
         return partial(if_then_else, self.sense_food, out1, out2)
    
+    def sample_foodeaten(self):
+        if self.moves % self.sample_freq_fe == 0:
+            self.ss_foodeaten[int(self.moves/self.sample_freq_fe)] = self.eaten-np.sum(self.ss_foodeaten)
+
     def run(self,routine):
         self._reset()
-        #print (routine)
-        i = 0
         while self.moves < self.max_moves:
             routine()
-            #print (routine)
-            i += 1
-        #print (i)
-        #exit()
 
     def parse_matrix(self, matrix):
         self.matrix = list()
@@ -597,20 +602,21 @@ def main():
     pset.addTerminal(ant.right)
     """
     #ant.load_trail()
-    individual = 'prog3(if_food_ahead(move_forward, move_forward), if_food_ahead(turn_left, move_forward), if_food_ahead(turn_right, move_forward))'
-    individual = 'prog3(if_food_ahead(move, move), if_food_ahead(left, move), if_food_ahead(right, move))'    
+    #individual = 'prog3(if_food_ahead(move_forward, move_forward), if_food_ahead(turn_left, move_forward), if_food_ahead(turn_right, move_forward))'
+    #individual = 'prog3(if_food_ahead(move, move), if_food_ahead(left, move), if_food_ahead(right, move))'    
     #individual = 'prog3(prog3(move_forward,turn_right, if_food_ahead(if_food_ahead(prog3(move_forward, move_forward, move_forward), prog2(turn_left, turn_right)), turn_left)), if_food_ahead(turn_left, turn_left), if_food_ahead(move_forward, turn_right))'
     #individual = 'prog3(prog3(move_forward,turn_right, if_food_ahead(if_food_ahead(prog3(move_forward, move_forward, move_forward), prog3(turn_left, turn_right,move_forward)), turn_left)), if_food_ahead(turn_left, turn_left), if_food_ahead(move_forward, turn_right))'    
     #individual = 'prog2(left,prog2(prog3(left,right,left),right))'
 
 
     #New Samples
-    individual = 'prog2(prog3(prog3(prog2(prog3(left,left,right),prog2(right,left)),prog2(prog2(right,right),prog3(move,move,left)),if_food_ahead(prog2(left,left),left)),right,if_food_ahead(prog2(prog2(right,left),move),if_food_ahead(if_food_ahead(right,left),move))),prog2(if_food_ahead(if_food_ahead(prog3(left,right,move),prog2(left,right)),move),prog3(if_food_ahead(prog2(left,move),prog2(move,left)),move,move)))'
+    #individual = 'prog2(prog3(prog3(prog2(prog3(left,left,right),prog2(right,left)),prog2(prog2(right,right),prog3(move,move,left)),if_food_ahead(prog2(left,left),left)),right,if_food_ahead(prog2(prog2(right,left),move),if_food_ahead(if_food_ahead(right,left),move))),prog2(if_food_ahead(if_food_ahead(prog3(left,right,move),prog2(left,right)),move),prog3(if_food_ahead(prog2(left,move),prog2(move,left)),move,move)))'
+    individual = 'prog3(if_food_ahead(move,prog3(left,if_food_ahead(move,right),move)),if_food_ahead(prog2(prog2(move,move),right),right),if_food_ahead(prog2(prog2(move,move),move),left))'
     routine= ant.build_routine(individual)
     #routine = compile(individual, pset)
     #print (individual,routine)
     ant.run(routine)
-    print (ant.eaten)
+    print (ant.eaten,ant.ss_foodeaten)
     exit()
 
 if __name__ == '__main__':
