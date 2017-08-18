@@ -499,7 +499,7 @@ class AntSimulator(object):
         self.eaten = 0
         self.routine = None
         self.sample_freq_fe = N
-        self.ss_foodeaten = np.zeros(self.sample_freq_fe)  
+        self.ss_foodeaten = np.zeros(int(self.max_moves/self.sample_freq_fe))
         self.load_trail()
 
     def _reset(self):
@@ -509,7 +509,7 @@ class AntSimulator(object):
         self.dir = 1
         self.moves = 0  
         self.eaten = 0
-        self.ss_foodeaten = np.zeros(self.sample_freq_fe)
+        self.ss_foodeaten = np.zeros(int(self.max_moves/self.sample_freq_fe))
         self.matrix_exc = copy.deepcopy(self.matrix)
 
     @property
@@ -548,7 +548,7 @@ class AntSimulator(object):
    
     def sample_foodeaten(self):
         if self.moves % self.sample_freq_fe == 0:
-            self.ss_foodeaten[int(self.moves/self.sample_freq_fe)] = self.eaten-np.sum(self.ss_foodeaten)
+            self.ss_foodeaten[int(self.moves/self.sample_freq_fe)-1] = self.eaten-np.sum(self.ss_foodeaten)
 
     def run(self,routine):
         self._reset()

@@ -1,4 +1,5 @@
 from fitness.evaluation import evaluate_fitness
+from fitness.evaluation import evaluate_novelty
 from operators.crossover import crossover
 from operators.mutation import mutation
 from operators.replacement import replacement, steady_state
@@ -29,7 +30,9 @@ def step(individuals):
 
     # Evaluate the fitness of the new population.
     new_pop = evaluate_fitness(new_pop)
-
+    
+    new_pop = evaluate_novelty(individuals)
+    
     # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
 

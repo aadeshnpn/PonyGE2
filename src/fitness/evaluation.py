@@ -3,7 +3,7 @@ import numpy as np
 from algorithm.parameters import params
 from stats.stats import stats
 from utilities.stats.trackers import cache, runtime_error_cache
-
+from sklearn.neighbors import KDTree
 
 def evaluate_fitness(individuals):
     """
@@ -133,3 +133,14 @@ def eval_or_append(ind, results, pool):
                 
                 # All fitnesses are valid.
                 cache[ind.phenotype] = ind.fitness
+
+
+def evaluate_novelty(individuals):
+    list_sample_foodeaten = np.array([indi.sample_foodeaten for indi in individuals])
+    kdt = KDTree(list_sample_foodeaten,leaf_size=40,metric='euclidean')
+    dist,ind = kdt.query(list_sample_foodeaten,k=25)
+    sparseness = dist.mean(axis=1)
+    for id in range(len(individuals)):
+        individuals[id].fitness = sparseness[id]
+    
+    return individuals

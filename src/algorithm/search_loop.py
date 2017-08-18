@@ -1,6 +1,7 @@
 from multiprocessing import Pool
 from algorithm.parameters import params
 from fitness.evaluation import evaluate_fitness
+from fitness.evaluation import evaluate_novelty
 from stats.stats import stats, get_stats
 from utilities.stats import trackers
 from operators.initialisation import initialisation
@@ -27,6 +28,9 @@ def search_loop():
 
     # Evaluate initial population
     individuals = evaluate_fitness(individuals)
+
+    # Run Novelty search 
+    individuals = evaluate_novelty(individuals)
 
     # Generate statistics for run so far
     get_stats(individuals)

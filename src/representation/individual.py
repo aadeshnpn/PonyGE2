@@ -32,6 +32,7 @@ class Individual(object):
             self.genome, self.tree = genome, ind_tree
 
         self.fitness = params['FITNESS_FUNCTION'].default_fitness
+        self.foodeaten_sample = None
         self.runtime_error = False
         self.name = None
 
@@ -153,7 +154,7 @@ class Individual(object):
         """
 
         # Evaluate fitness using specified fitness function.
-        self.fitness = params['FITNESS_FUNCTION'](self)
+        self.fitness, self.sample_foodeaten = params['FITNESS_FUNCTION'](self)
 
         if params['MULTICORE']:
             return self
