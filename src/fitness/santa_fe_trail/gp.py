@@ -503,7 +503,8 @@ class AntSimulator(object):
         ##Since sklearn can't computer knn for 3 dimension convert the below matrix
         #self.foodeaten_sequence = np.zeros((89,2))
         self.foodeaten_sequence = np.zeros(89)
-        self.foodeaten_id = 0        
+        self.foodeaten_id = 0 
+        self.step_sequence = np.zeros(89)
         self.load_trail()
 
     def _reset(self):
@@ -514,7 +515,8 @@ class AntSimulator(object):
         self.moves = 0  
         self.eaten = 0
         self.ss_foodeaten = np.zeros(int(self.max_moves/self.sample_freq_fe))
-        self.foodeaten_sequence = np.zeros(89)        
+        self.foodeaten_sequence = np.zeros(89)       
+        self.step_sequence = np.full(89,-99,dtype=int)
         self.foodeaten_id = 0
         self.matrix_exc = copy.deepcopy(self.matrix)
 
@@ -543,6 +545,7 @@ class AntSimulator(object):
                 self.eaten += 1
                 #self.foodeaten_sequence[self.foodeaten_id] = np.array([self.row,self.col])
                 self.foodeaten_sequence[self.foodeaten_id] = int(self.paring_function(self.row+1,self.col+1))
+                self.step_sequence[self.foodeaten_id] = self.moves
                 self.foodeaten_id += 1
             self.matrix_exc[self.row][self.col] = "passed"
             self.sample_foodeaten()

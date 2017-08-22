@@ -32,7 +32,7 @@ def step(individuals):
     new_pop = evaluate_fitness(new_pop)
     
     new_pop = evaluate_novelty(individuals)
-    
+
     # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
 

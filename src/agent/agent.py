@@ -1,5 +1,6 @@
 from operators.initialisation import initialisation
 from fitness.evaluation import evaluate_fitness
+from fitness.evaluation import evaluate_novelty
 from stats.stats import stats, get_stats
 from operators.crossover import crossover
 from operators.mutation import mutation
@@ -25,6 +26,7 @@ class Agent():
         # Evaluate the fitness for the the individual    
         self.individual = evaluate_fitness(self.individual)
 
+        #self.individual = evaluate_novelty(self.individual)
         # Flag which store the boolean value for other nebouring agents found or not
         self.agents_found = False
 
@@ -74,6 +76,8 @@ class Agent():
 
             # Evaluate the fitness of the new population.
             new_pop = evaluate_fitness(new_pop)
+
+            new_pop = evaluate_novelty(new_pop)
 
             # Replace the old population with the new population.
             individuals = replacement(new_pop, individuals)

@@ -4,6 +4,7 @@ from algorithm.parameters import params
 from stats.stats import stats
 from utilities.stats.trackers import cache, runtime_error_cache
 from sklearn.neighbors import KDTree
+from sklearn.neighbors import NearestNeighbors
 
 def evaluate_fitness(individuals):
     """
@@ -135,14 +136,23 @@ def eval_or_append(ind, results, pool):
                 cache[ind.phenotype] = ind.fitness
 
 
+def custome_distance(a,b):
+    dist = np.ones(89) * 500
+    for id in range(len(a)):
+        if int(a[id]) == -99 and int(b[id]) == -99:
+            dist[id] = 0
+        elif int(a[id]) != -99 and int(b[id]) != -99:
+            dist[id] = a[id] - b[id]
+    return np.sqrt(np.sum(dist**2))
+
 def evaluate_novelty(individuals):
-    return evaluate_novelty_foodeaten_sequence(individuals)
+    return evaluate_novelty_step_sequence(individuals)
 
 def evaluate_novelty_foodeaten(individuals):
     ##First Part from the paper which considers foodeaten samples
     list_sample_foodeaten = np.array([indi.sample_foodeaten for indi in individuals])
     kdt = KDTree(list_sample_foodeaten,leaf_size=40,metric='euclidean')
-    dist,ind = kdt.query(list_sample_foodeaten,k=25)
+    dist,ind = kdt.query(list_sample_foodeaten,k=10)
     sparseness = dist.mean(axis=1)
     for id in range(len(individuals)):
         individuals[id].fitness = sparseness[id]
@@ -152,7 +162,17 @@ def evaluate_novelty_foodeaten_sequence(individuals):
     ##Second Part from the paper which considers sequence or co-ordinates of food eaten
     list_foodeaten_sequence = np.array([indi.foodeaten_sequence for indi in individuals])
     kdt = KDTree(list_foodeaten_sequence,leaf_size=40,metric='euclidean')
-    dist,ind = kdt.query(list_foodeaten_sequence,k=25)
+    dist,ind = kdt.query(list_foodeaten_sequence,k=10)
+    sparseness = dist.mean(axis=1)
+    for id in range(len(individuals)):
+        individuals[id].fitness = sparseness[id]
+    return individuals
+
+def evaluate_novelty_step_sequence(individuals):
+    list_step_sequence = np.array([indi.step_sequence for indi in individuals])
+    nbrs = NearestNeighbors(n_neighbors=5,algorithm='auto',metric=custome_distance)
+    nbrs.fit(list_step_sequence)
+    dist,ind = nbrs.kneighbors(list_step_sequence)
     sparseness = dist.mean(axis=1)
     for id in range(len(individuals)):
         individuals[id].fitness = sparseness[id]
