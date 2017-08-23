@@ -11,16 +11,16 @@ INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    12
 MAX_TREE_DEPTH:         14
 MUTATION:               int_flip_per_codon
-POPULATION_SIZE:        100
+POPULATION_SIZE:        200
 FITNESS_FUNCTION:       santa_fe_trail.santa_fe_trail
 REPLACEMENT:            generational
 SELECTION:              tournament
 #SELECTION:              truncation
-SELECTION_PROPORTION:   0.5
+#SELECTION_PROPORTION:   0.5
 TOURNAMENT_SIZE:        15
 VERBOSE:                False
 MULTIAGENT:             True
 AGENT_SIZE:		        100
 INTERACTION_PROBABILITY:0.9
 MUTATION_PROBABILITY:   0.01
-MAX_WRAPS:              5
+MAX_WRAPS:              10
