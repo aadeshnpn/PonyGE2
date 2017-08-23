@@ -157,7 +157,7 @@ class Individual(object):
         """
 
         # Evaluate fitness using specified fitness function.
-        self.fitness, self.sample_foodeaten, self.foodeaten_sequence, self.step_sequence = params['FITNESS_FUNCTION'](self)
+        self.fitness, self.foodeaten_sample, self.foodeaten_sequence, self.step_sequence = params['FITNESS_FUNCTION'](self)
 
         if params['MULTICORE']:
             return self

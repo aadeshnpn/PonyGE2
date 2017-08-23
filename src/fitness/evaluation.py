@@ -146,11 +146,13 @@ def custome_distance(a,b):
     return np.sqrt(np.sum(dist**2))
 
 def evaluate_novelty(individuals):
-    return evaluate_novelty_step_sequence(individuals)
+    #return evaluate_novelty_step_sequence(individuals)
+    #return evaluate_novelty_foodeaten(individuals)
+    return evaluate_novelty_foodeaten_sequence(individuals)
 
 def evaluate_novelty_foodeaten(individuals):
     ##First Part from the paper which considers foodeaten samples
-    list_sample_foodeaten = np.array([indi.sample_foodeaten for indi in individuals])
+    list_sample_foodeaten = np.array([indi.foodeaten_sample for indi in individuals])
     kdt = KDTree(list_sample_foodeaten,leaf_size=40,metric='euclidean')
     dist,ind = kdt.query(list_sample_foodeaten,k=10)
     sparseness = dist.mean(axis=1)
