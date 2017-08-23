@@ -32,7 +32,10 @@ class Individual(object):
             self.genome, self.tree = genome, ind_tree
 
         self.fitness = params['FITNESS_FUNCTION'].default_fitness
-        self.foodeaten_sample = None
+
+        self.foodeaten_sample = np.zeros(20)
+        self.foodeaten_sequence = np.zeros(89)
+        self.step_sequence = np.full(89,-99,dtype=int)
         self.runtime_error = False
         self.name = None
 
