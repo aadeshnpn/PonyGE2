@@ -571,6 +571,8 @@ class AntSimulator(object):
         self._reset()
         while self.moves < self.max_moves:
             routine()
+            if self.eaten == 89:
+                break
 
     def parse_matrix(self, matrix):
         self.matrix = list()
@@ -607,8 +609,8 @@ class AntSimulator(object):
         return routine
 
 def main():
-    ant = AntSimulator(600)
-
+    ant = AntSimulator(400)
+    individual = sys.argv[1]
     """
     pset = PrimitiveSet("MAIN", 0)
     pset.addPrimitive(ant.if_food_ahead, 2)
@@ -628,13 +630,12 @@ def main():
 
     #New Samples
     #individual = 'prog2(prog3(prog3(prog2(prog3(left,left,right),prog2(right,left)),prog2(prog2(right,right),prog3(move,move,left)),if_food_ahead(prog2(left,left),left)),right,if_food_ahead(prog2(prog2(right,left),move),if_food_ahead(if_food_ahead(right,left),move))),prog2(if_food_ahead(if_food_ahead(prog3(left,right,move),prog2(left,right)),move),prog3(if_food_ahead(prog2(left,move),prog2(move,left)),move,move)))'
-    individual = 'prog3(if_food_ahead(move,prog3(left,if_food_ahead(move,right),move)),if_food_ahead(prog2(prog2(move,move),right),right),if_food_ahead(prog2(prog2(move,move),move),left))'
+    #individual = 'prog3(if_food_ahead(move,prog3(left,if_food_ahead(move,right),move)),if_food_ahead(prog2(prog2(move,move),right),right),if_food_ahead(prog2(prog2(move,move),move),left))'
     routine= ant.build_routine(individual)
     #routine = compile(individual, pset)
     #print (individual,routine)
     ant.run(routine)
-    print (ant.eaten,ant.ss_foodeaten)
-    exit()
+    print (ant.moves,ant.eaten)
 
 if __name__ == '__main__':
     main()
