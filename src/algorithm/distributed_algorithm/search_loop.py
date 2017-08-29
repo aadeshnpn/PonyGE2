@@ -25,7 +25,7 @@ def search_loop():
     agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
 
     fitness = [a.individual[0].fitness for a in agents]
-    print (fitness)
+    #print (fitness)
 
     # Collect individual state for the first time
     get_stats(individuals_from_agents(agents))
@@ -38,7 +38,7 @@ def search_loop():
         agents = params['STEP'](agents)
 
         fitness = [a.individual[0].fitness for a in agents]
-        print (fitness)
+        #print (fitness)
         #Gather stats again after step
         get_stats(individuals_from_agents(agents))
 
