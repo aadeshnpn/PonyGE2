@@ -18,6 +18,8 @@ def step(individuals):
     evolutionary generation will be imposed.
     :return: The next generation of the population.
     """
+    #Evaluate Novelty
+    individuals = evaluate_novelty(individuals)  
 
     # Select parents from the original population.
     parents = selection(individuals)
@@ -31,14 +33,14 @@ def step(individuals):
     # Evaluate the fitness of the new population.
     new_pop = evaluate_fitness(new_pop)
     
-    new_pop = evaluate_novelty(new_pop)
-
+    individuals = evaluate_fitness(individuals)
+    
     # Replace the old population with the new population.
     individuals = replacement(new_pop, individuals)
 
     # Generate statistics for run so far
     get_stats(individuals)
-    
+
     return individuals
 
 

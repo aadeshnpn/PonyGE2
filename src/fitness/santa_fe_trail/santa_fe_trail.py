@@ -25,7 +25,7 @@ class santa_fe_trail(base_ff):
         self.maximise = True
 
     def evaluate(self, ind, **kwargs):
-        ant = AntSimulator(400)
+        ant = AntSimulator(650)
         code = ind.phenotype
         routine = ant.build_routine(code)
         ant.run(routine)
