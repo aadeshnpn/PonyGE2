@@ -64,6 +64,9 @@ class Agent():
             # Combine the original individual and individuals found by interacting with nearby agents to form 
             # a population
             individuals = self.individual + self.nearby_agents
+            
+            # Evaluate novelty
+            individuals = evaluate_novelty(individuals)
 
             # Find out parents from the population
             parents = selection(individuals)
@@ -76,8 +79,8 @@ class Agent():
 
             # Evaluate the fitness of the new population.
             new_pop = evaluate_fitness(new_pop)
-
-            new_pop = evaluate_novelty(new_pop)
+            
+            individuals = evaluate_fitness(individuals)
 
             # Replace the old population with the new population.
             individuals = replacement(new_pop, individuals)

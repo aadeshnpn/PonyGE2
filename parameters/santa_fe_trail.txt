@@ -1,4 +1,4 @@
-CACHE:                  False
+CACHE:                  True
 CODON_SIZE:             10000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.9
