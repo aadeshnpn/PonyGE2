@@ -5,7 +5,7 @@ from stats.stats import stats
 from utilities.stats.trackers import cache, runtime_error_cache
 from sklearn.neighbors import KDTree
 from sklearn.neighbors import NearestNeighbors
-#from fitness.santa_fe_trail.noveldist import novel_distance
+from fitness.santa_fe_trail.noveldist import *
 
 def evaluate_fitness(individuals):
     """
@@ -173,7 +173,7 @@ def evaluate_novelty_foodeaten_sequence(individuals):
 
 def evaluate_novelty_step_sequence(individuals):
     list_step_sequence = np.array([indi.step_sequence for indi in individuals])
-    nbrs = NearestNeighbors(n_neighbors=6,algorithm='auto',metric=custome_distance)
+    nbrs = NearestNeighbors(n_neighbors=6,algorithm='auto',metric=Noveldist.novel_distance)
     nbrs.fit(list_step_sequence)
     dist,ind = nbrs.kneighbors(list_step_sequence)
     sparseness = dist.sum(axis=1)/5
