@@ -1,0 +1,25 @@
+#!/bin/bash
+
+source ~/anaconda2/bin/activate hub;
+
+#current_loc=/home/aadeshnpn/Documents/BYU/hcmi/swarm_simulator/ponydge/results/santa_multi_novel_100_1
+current_loc=/tmp/novelty_distri_500
+main()
+{
+    filelist=($(find ${current_loc} -type f -name best.txt))
+    for file in ${filelist[@]}
+    do
+
+        individual=$(sed -n '5p' ${file})
+        result=($(python fitness/santa_fe_trail/gp.py ${individual}))
+        #if [[ ${result[1]} -eq 89 ]]
+        #then
+        #    echo "${file} | ${result[@]}"
+        #fi
+        echo "${file} | ${result[@]}"        
+
+    done
+}
+
+main
+
