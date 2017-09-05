@@ -433,6 +433,10 @@ class Agent:
 
     def on_signal(self,grid_value,environment):
         signal_objects = list(filter(lambda x : type(x).__name__ == 'Signal',environment.grid_objects[grid_value]))
+        try:
+            signal_objects.remove(self.signal)
+        except ValueError:
+            pass
         if signal_objects:
             self.SEE_SIGNAL = True
             self.environment_signals = signal_objects[0]
@@ -470,7 +474,7 @@ class Agent:
     def deposite_food(self,environment):
         if self.HAS_FOOD:
             environment.fitness += 1
-            self.DROP_FOOD = True
+            #self.DROP_FOOD = True
             self.HAS_FOOD = False
             #eprint (self.name,self.location,self.food)
             ##Destroy food object
@@ -524,10 +528,10 @@ class Agent:
     def pick_cues(self,environment):
         if self.SEE_CUE and self.environment_cue:
             #eprint (self.name)
-            #self.direction = sum(cue.direction for cue in self.environment_cue) / len(self.environment_cue)
-            #self.velocity = sum(cue.velocity for cue in self.environment_cue) / len(self.environment_cue)
-            self.direction = self.environment_cue[0].direction #/ len(self.environment_cue)
-            self.velocity = self.environment_cue[0].velocity
+            self.direction = sum(cue.direction for cue in self.environment_cue) / len(self.environment_cue)
+            self.velocity = sum(cue.velocity for cue in self.environment_cue) / len(self.environment_cue)
+            #self.direction = self.environment_cue[0].direction #/ len(self.environment_cue)
+            #self.velocity = self.environment_cue[0].velocity
             #eprint ('after cue calculation',self.environment_cue[0].direction,self.direction,self.velocity)
             #self.location = [0,0]
         #pass
@@ -588,6 +592,13 @@ class Agent:
             #print (self.grid,self.temp_grid)            
             #print (environment.grid_objects[list(self.grid.values())[0]])
             environment.grid_objects[list(self.grid.values())[0]].remove(self)
+            if self.signal.grid:
+                for grid in self.signal.grid:
+                    try:
+                        environment.grid_objects[grid].remove(self.signal)
+                    except ValueError:
+                        pass
+                self.send_signals(environment)
             #eprint ("grid change",self.temp_grid)
             self.grid = self.temp_grid
             environment.grid_objects[list(self.grid.values())[0]].append(self)

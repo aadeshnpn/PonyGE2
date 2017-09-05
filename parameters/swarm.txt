@@ -11,9 +11,9 @@ INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
 MAX_TREE_DEPTH:         19
 MUTATION:               int_flip_per_codon
-POPULATION_SIZE:        200
+POPULATION_SIZE:        20
 FITNESS_FUNCTION:       swarm.swarm
 REPLACEMENT:            generational
 SELECTION:              tournament
-TOURNAMENT_SIZE:        5
+TOURNAMENT_SIZE:        2
 VERBOSE:                False

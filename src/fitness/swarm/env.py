@@ -305,6 +305,15 @@ class Environment:
             self.grid_objects[grid].append(self.cues[self.cue_id])
         self.cue_id += 1
 
+    def remove_cue(self):
+        temp_cues = copy.deepcopy(self.cues)
+        for cue in temp_cues:
+            if self.cues[cue].activity <= 0:
+                cue_obj = self.cues.pop(cue)
+                del cue_obj
+            else:
+                self.cues[cue].activity -= 1
+
     def add_food(self,location,food = None):
         _,food_grid = self.findGrid(location)        
         if food is None:
@@ -410,8 +419,8 @@ class Environment:
             #return np.pi + d
         return (i,d)
 
-    def move_agents(self):
-        self.agents = Parallel(n_jobs=8)(delayed(random_walk)(i) for i in self.agents)
+    #def move_agents(self):
+    #    self.agents = Parallel(n_jobs=8)(delayed(random_walk)(i) for i in self.agents)
 
     def pack_chromosomes(self,epoch,allUnique=False):
         ##First find the unique chromosomes
@@ -505,6 +514,7 @@ class Environment:
         while ticks/len(self.agents) > 50 :
             self.looper()
             ticks -= len(self.agents)
+        self.remove_cue()
         #eprint (int(self.fitness))
         return int(self.fitness)
         

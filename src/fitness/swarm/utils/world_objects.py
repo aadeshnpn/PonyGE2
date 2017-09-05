@@ -44,6 +44,7 @@ class Cue:
         self.location = location
         self.radius = radius
         self.grid = grid
+        self.activity=30
         ##Communication parameter for cue
         self.velocity = 5
         self.direction = 0
