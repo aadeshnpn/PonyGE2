@@ -2,8 +2,8 @@
 
 source ~/anaconda2/bin/activate hub;
 
-#current_loc=/home/aadeshnpn/Documents/BYU/hcmi/swarm_simulator/ponydge/results/santa_multi_novel_100_1
-current_loc=/tmp/novelty_distri_500
+#current_loc=/home/aadeshnpn/Documents/BYU/hcmi/swarm_simulator/ponydge/results/novel_330
+current_loc=/tmp/santa_dist_330_200_100
 main()
 {
     filelist=($(find ${current_loc} -type f -name best.txt))

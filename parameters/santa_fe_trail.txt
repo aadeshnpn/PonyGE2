@@ -3,7 +3,7 @@ CODON_SIZE:             10000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.9
 DEBUG:                  False
-GENERATIONS:	        200
+GENERATIONS:	        100
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           santa_fe_trail.bnf
 #INITIALISATION:         PI_grow
@@ -12,7 +12,7 @@ INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    12
 MAX_TREE_DEPTH:         14
 MUTATION:               int_flip_per_codon
-POPULATION_SIZE:	    500
+POPULATION_SIZE:	    1000
 FITNESS_FUNCTION:       santa_fe_trail.santa_fe_trail
 #REPLACEMENT:            steady_state
 REPLACEMENT:            generational
