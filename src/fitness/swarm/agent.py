@@ -34,7 +34,7 @@ class Agent:
         self.active_rule = []
         self.active_internal_state = []
         self.obstacle = None
-        self.velocity = 10
+        self.velocity = 5
         self.timestep_threshold = 500
         self.signal = None 
         self.environment_signals = None
@@ -541,6 +541,8 @@ class Agent:
     ##What are the information that can be transferred through signal
     ##For now lets only broadcast, the site information, the direction it is headed
     def send_signals(self,environment):
+        #print (self.location,environment.signal_radius)
+        self.limit_check(environment)
         self.signal.grid = environment.get_adjcent_grid(self.location,environment.signal_radius)
         #print (self.location,self.signal.grid)
         for grid in self.signal.grid:

@@ -120,7 +120,7 @@ class Environment:
         self.rules = []
         self.fitness = 0
         self.potential_fields = []
-        self.signal_radius = 40
+        self.signal_radius = 20
         self.cue_radius = 10
         self.GEVA = True
 
@@ -353,12 +353,9 @@ class Environment:
     
     def findGrid(self,point):
         grid_key = (self.find_lowerbound(point),self.find_upperbound(point))
-        #eprint (grid_key)
         try:
             return grid_key, self.grid[grid_key]
         except KeyError:
-            #print ('Grid not found',grid_key)
-            #exit(1)
             return None,None
     
     def get_adjcent_grid(self,point,radius):
@@ -369,29 +366,18 @@ class Environment:
             return [center_grid]
         else:
             scale = math.ceil(radius/self.grid_size)
-            #_,left_grid = self.findGrid((point[0]-radius,point[1]))
-            #_,right_grid = self.findGrid((point[0]+radius,point[1]))
-            #print (left_grid,right_grid)
-            #_,up_grid = self.findGrid((point[0],point[1]+radius)) 
-            #_,down_grid = self.findGrid((point[0],point[1]-radius))
-            #print (left_grid,right_grid)
-            #print (down_grid,up_grid)
             horizontal_grid = list(range(center_grid-scale,center_grid+scale,1))
             width_scale = int(self.width / self.grid_size)
-            #print (width_scale)
             vertical_grid = list(range(center_grid-scale*width_scale,center_grid+scale*width_scale,width_scale))
             h_v_grid = []
             for grid in vertical_grid:
                 h_v_grid += list(range(grid-scale,grid+scale,1))
             all_grid = h_v_grid + horizontal_grid
-            #print (all_grid)
             all_grid = [grid for grid in all_grid if grid > 0 and grid <= self.grid_len]
-            #all_grid = horizontal_grid
         return set(all_grid)
 
     def addAgentGrid(self,grid_key,agent):
         self.grid[grid_key].append(agent)
-    #def findAgentsIngrid(self,point)
 
     def removeAgentGrid(self,grid_key,agent):
         self.grid[grid_key].remove(agent)
@@ -478,25 +464,11 @@ class Environment:
             
             self.agents[i].apply_actions(self)
             #self.agents[i].avoid_obstacles(self)
-            
-            ##Genetic
-            #self.agents[i].act(self)
+
             ##Communication
             self.agents[i].move(self)
-            
-            #if self.cues:
-            #    eprint (self.cues,self.cues[1].location)
-                #eprint (self.cue_id,len(self.cues))
-                #eprint (self.cues[1],self.cues[1].location)
-
-            #eprint(self.food)
-            #self.fitness_check(sel)
-            #exit()
-            #self.agents[i].random_walk(self)
             self.agents[i].update(self)
-            #self.agents[i].increment_timestep()
-            #self.agents[i].follow(self)
-            #self.findGrid(self.agent[i].location)
+
     """
     def logic(self):
         self.win.draw_visited_grid()        
@@ -557,7 +529,7 @@ def main(epoch):
     #print (env.grid)
     env.build_json_environment()
     #env.parse_grammar(os.path.join(ROOT_DIR, args.rules))     
-    env.add_agents(150)
+    env.add_agents(2)
     #first_agent = np.random.choice(env.agents)
     #first_agent.information = True
     env.simulator(epoch)
