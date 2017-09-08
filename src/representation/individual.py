@@ -33,7 +33,7 @@ class Individual(object):
 
         self.fitness = params['FITNESS_FUNCTION'].default_fitness
 
-        self.foodeaten_sample = np.zeros(20)
+        self.foodeaten_sample = np.zeros(26)
         self.foodeaten_sequence = np.zeros(89)
         self.step_sequence = np.full(89,-99,dtype=int)
         self.runtime_error = False
@@ -158,6 +158,6 @@ class Individual(object):
 
         # Evaluate fitness using specified fitness function.
         self.fitness, self.foodeaten_sample, self.foodeaten_sequence, self.step_sequence = params['FITNESS_FUNCTION'](self)
-
+        #print ('2',self.foodeaten_sample,len(self.foodeaten_sample))
         if params['MULTICORE']:
             return self

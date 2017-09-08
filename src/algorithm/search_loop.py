@@ -28,7 +28,7 @@ def search_loop():
 
     # Evaluate initial population
     individuals = evaluate_fitness(individuals)
-    
+
     # Generate statistics for run so far
     get_stats(individuals)
 

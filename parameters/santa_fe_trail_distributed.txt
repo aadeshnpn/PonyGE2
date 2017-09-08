@@ -3,7 +3,7 @@ CODON_SIZE:             10000
 CROSSOVER:              variable_onepoint
 CROSSOVER_PROBABILITY:  0.9
 DEBUG:                  False
-GENERATIONS:	        300
+GENERATIONS:	        50
 MAX_GENOME_LENGTH:      500
 GRAMMAR_FILE:           santa_fe_trail.bnf
 INITIALISATION:         uniform_tree
@@ -18,6 +18,6 @@ SELECTION:              tournament
 VERBOSE:                False
 MULTIAGENT:             True
 AGENT_SIZE:		        100
-INTERACTION_PROBABILITY:0.95
+INTERACTION_PROBABILITY:0.85
 MUTATION_PROBABILITY:   0.01
 MAX_WRAPS:              10

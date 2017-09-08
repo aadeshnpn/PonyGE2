@@ -493,7 +493,7 @@ class AntSimulator(object):
     dir_row = [1, 0, -1, 0]
     dir_col = [0, 1, 0, -1]
     
-    def __init__(self, max_moves, N=20):
+    def __init__(self, max_moves, N=25):
         self.max_moves = max_moves
         self.moves = 0
         self.eaten = 0

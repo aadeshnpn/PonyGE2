@@ -25,13 +25,13 @@ class santa_fe_trail(base_ff):
         self.maximise = True
 
     def evaluate(self, ind, **kwargs):
-        ant = AntSimulator(330)
+        ant = AntSimulator(650)
         code = ind.phenotype
         routine = ant.build_routine(code)
         ant.run(routine)
         #print (code,'Food eaten',ant.eaten)
         #return 90.0/(ant.eaten+1)
-        #print (ant.eaten, ant.ss_foodeaten)
+        #print ('1',code,ant.ss_foodeaten, len(ant.ss_foodeaten))
         return ant.eaten, ant.ss_foodeaten, ant.foodeaten_sequence, ant.step_sequence
 
 ##Parsing type
