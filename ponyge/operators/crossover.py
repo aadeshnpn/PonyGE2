@@ -91,6 +91,8 @@ def variable_onepoint(p_0, p_1):
     :param p_1: Parent 1
     :return: A list of crossed-over individuals.
     """
+    variable_onepoint.representation = "linear"
+
     # Get the chromosomes.
     genome_0, genome_1 = p_0.genome, p_1.genome
 
@@ -126,7 +128,7 @@ def fixed_onepoint(p_0, p_1):
     :param p_1: Parent 1
     :return: A list of crossed-over individuals.
     """
-    
+    fixed_onepoint.representation = "linear"    
     # Get the chromosomes.
     genome_0, genome_1 = p_0.genome, p_1.genome
 
@@ -162,7 +164,7 @@ def fixed_twopoint(p_0, p_1):
     :param p_1: Parent 1
     :return: A list of crossed-over individuals.
     """
-    
+    fixed_twopoint.representation = "linear"    
     genome_0, genome_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points.
@@ -198,7 +200,7 @@ def variable_twopoint(p_0, p_1):
     :param p_1: Parent 1
     :return: A list of crossed-over individuals.
     """
-    
+    variable_twopoint.representation = "linear"    
     genome_0, genome_1 = p_0.genome, p_1.genome
     
     # Uniformly generate crossover points.
@@ -223,6 +225,9 @@ def variable_twopoint(p_0, p_1):
     
     return [ind_0, ind_1]
 
+    # From crossover file
+    # Set attributes for all operators to define linear or subtree representations.
+
 
 def subtree(p_0, p_1):
     """
@@ -234,6 +239,8 @@ def subtree(p_0, p_1):
     :param p_1: Parent 1.
     :return: A list of crossed-over individuals.
     """
+
+    subtree.representation = "subtree"
 
     def do_crossover(tree0, tree1, shared_nodes):
         """
@@ -425,10 +432,3 @@ def get_max_genome_index(ind_0, ind_1):
         
     return max_p_0, max_p_1
 
-
-# Set attributes for all operators to define linear or subtree representations.
-variable_onepoint.representation = "linear"
-fixed_onepoint.representation = "linear"
-variable_twopoint.representation = "linear"
-fixed_twopoint.representation = "linear"
-subtree.representation = "subtree"

@@ -306,10 +306,20 @@ def set_params(command_line_args, create_files=True):
 
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
-        #set_param_imports()
+        set_param_imports()
 
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
+
+        # Crossover variables
+        from ponyge.operators.crossover import ( 
+            variable_onepoint, variable_twopoint,
+            fixed_onepoint, fixed_twopoint
+        )
+        variable_onepoint.representation = "linear"    
+        variable_twopoint.representation = "linear"    
+        fixed_onepoint.representation = "linear"                    
+        fixed_twopoint.representation = "linear"
 
         # Set GENOME_OPERATIONS automatically for faster linear operations.
         if params['CROSSOVER'].representation == "linear" and \

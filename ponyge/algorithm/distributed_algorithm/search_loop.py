@@ -22,7 +22,7 @@ def search_loop():
     """
 
     # Create a list of agents based on the paramater passed
-    agents = create_agents(params['AGENT_SIZE'],params['INTERACTION_PROBABILITY'])
+    agents = create_agents(params['AGENT_SIZE'], params['INTERACTION_PROBABILITY'])
 
     # Collect individual state for the first time
     get_stats(individuals_from_agents(agents))
