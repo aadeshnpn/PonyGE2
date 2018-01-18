@@ -61,7 +61,7 @@ def parse_cmd_args(arguments):
 
     parser._optionals.title = 'PonyGE2 command-line usage'
 
-    
+    # Set up class for parsing list arguments.
     class ListAction(argparse.Action):
         """
         Class for parsing a given string into a list.
