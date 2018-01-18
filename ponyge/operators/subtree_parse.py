@@ -1,11 +1,8 @@
+from ponyge.representation import individual, tree
+from ponyge.utilities.representation.check_methods import get_output, generate_codon
 import re
 from copy import copy
 from itertools import zip_longest
-
-# from ponyge.algorithm.parameters import params
-from ponyge.representation import individual, tree
-from ponyge.utilities.representation.check_methods import get_output, generate_codon
-# from ponyge.utilities.stats import trackers
 
 
 def combine_snippets(parameter):

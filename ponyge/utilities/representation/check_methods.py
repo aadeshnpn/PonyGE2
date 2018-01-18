@@ -45,7 +45,7 @@ def check_genome_mapping(parameter, ind):
     """
     
     # Re-map individual using fast genome mapper to check everything is ok
-    new_ind = individual.Individual(ind.genome, None)
+    new_ind = individual.Individual(parameter, ind.genome, None)
     
     # Get attributes of both individuals.
     attributes_0 = vars(ind)
@@ -94,7 +94,7 @@ def check_ind_from_parser(parameter, ind, target):
     """
 
     # Re-map individual using genome mapper to check everything is ok.
-    new_ind = individual.Individual(ind.genome, None)
+    new_ind = individual.Individual(parameter, ind.genome, None)
     
     # Check phenotypes are the same.
     if new_ind.phenotype != ind.phenotype:
@@ -257,7 +257,7 @@ def get_nodes_and_depth(parameter, tree, nodes=0, max_depth=0):
     else:
         for child in NT_kids:
             # Recurse over all children.
-            nodes, max_depth = get_nodes_and_depth(child, nodes, max_depth)
+            nodes, max_depth = get_nodes_and_depth(parameter, child, nodes, max_depth)
     
     return nodes, max_depth
 

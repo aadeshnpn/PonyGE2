@@ -1,8 +1,3 @@
-from copy import copy
-from sys import stdout
-from time import time
-import numpy as np
-
 # from ponyge.algorithm.parameters import params
 from ponyge.utilities.algorithm.NSGA2 import compute_pareto_metrics
 from ponyge.utilities.algorithm.state import create_state
@@ -11,6 +6,10 @@ from ponyge.utilities.stats.save_plots import save_plot_from_data, \
     save_pareto_fitness_plot
 from ponyge.utilities.stats.file_io import save_stats_to_file, save_stats_headers, \
     save_best_ind_to_file, save_first_front_to_file
+from copy import copy
+from sys import stdout
+from time import time
+import numpy as np
 
 
 class Stats:
@@ -142,10 +141,10 @@ class Stats:
             save_stats_to_file(self.parameter, self.stats, end)
 
             if self.parameter.params['SAVE_ALL']:
-                save_best_ind_to_file(self.stats, self.parameter.trackers.best_ever, end, self.stats['gen'])
+                save_best_ind_to_file(self.parameter, self.stats, self.parameter.trackers.best_ever, end, self.stats['gen'])
 
             elif self.parameter.params['VERBOSE'] or end:
-                save_best_ind_to_file(self.stats, self.parameter.trackers.best_ever, end)
+                save_best_ind_to_file(self.parameter, self.stats, self.parameter.trackers.best_ever, end)
 
         if end and not self.parameter.params['SILENT']:
             self.print_final_stats()
@@ -164,7 +163,7 @@ class Stats:
         """
 
         # Compute the pareto front metrics for the population.
-        pareto = compute_pareto_metrics(individuals)
+        pareto = compute_pareto_metrics(individuals, self.parameter)
 
         # Save first front in trackers. Sort arbitrarily along first objective.
         self.parameter.trackers.best_ever = sorted(pareto.fronts[0], key=lambda x: x.fitness[0])

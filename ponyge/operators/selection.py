@@ -14,7 +14,7 @@ def selection(parameter, population):
     :return: selected population
     """
 
-    return parameter.params['SELECTION'](population)
+    return parameter.params['SELECTION'](parameter, population)
 
 
 def tournament(parameter, population):

@@ -27,7 +27,7 @@ def initialisation(parameter, size):
     size -= len(parameter.params['SEED_INDIVIDUALS'])
 
     # Initialise empty population.
-    individuals = parameter.params['INITIALISATION'](size)
+    individuals = parameter.params['INITIALISATION'](parameter, size)
 
     # Add seed individuals (if any) to current population.
     individuals.extend(parameter.params['SEED_INDIVIDUALS'])
@@ -131,7 +131,7 @@ def rhh(parameter, size):
         # If the population size is too small, can't use RHH initialisation.
         print("Error: population size too small for RHH initialisation.")
         print("Returning randomly built trees.")
-        return [individual.Individual(sample_genome(parameter), None)
+        return [individual.Individual(parameter, sample_genome(parameter), None)
                 for _ in range(size)]
 
     elif not depths:
@@ -220,7 +220,7 @@ def PI_grow(parameter, size):
         # initialisation.
         print("Error: population size too small for PI Grow initialisation.")
         print("Returning randomly built trees.")
-        return [individual.Individual(sample_genome(parameter), None)
+        return [individual.Individual(parameter, sample_genome(parameter), None)
                 for _ in range(size)]
 
     elif not depths:
@@ -281,10 +281,10 @@ def generate_ind_tree(parameter, max_depth, method):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
+    ind_tree = Tree(parameter, str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
-    genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
+    genome, output, nodes, _, depth = generate_tree(parameter, ind_tree, [], [], method,
                                                     0, 0, 0, max_depth)
 
     # Get remaining individual information
@@ -296,7 +296,7 @@ def generate_ind_tree(parameter, max_depth, method):
         phenotype = python_filter(phenotype)
 
     # Initialise individual
-    ind = individual.Individual(genome, ind_tree, map_ind=False)
+    ind = individual.Individual(parameter, genome, ind_tree, map_ind=False)
 
     # Set individual parameters
     ind.phenotype, ind.nodes = phenotype, nodes
@@ -319,10 +319,10 @@ def generate_PI_ind_tree(parameter, max_depth):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
+    ind_tree = Tree(parameter, str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
-    genome, output, nodes, depth = pi_grow(ind_tree, max_depth)
+    genome, output, nodes, depth = pi_grow(parameter, ind_tree, max_depth)
 
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
@@ -333,7 +333,7 @@ def generate_PI_ind_tree(parameter, max_depth):
         phenotype = python_filter(phenotype)
 
     # Initialise individual
-    ind = individual.Individual(genome, ind_tree, map_ind=False)
+    ind = individual.Individual(parameter, genome, ind_tree, map_ind=False)
 
     # Set individual parameters
     ind.phenotype, ind.nodes = phenotype, nodes
@@ -432,7 +432,7 @@ def load_population(parameter, target):
 
         if genotype:
             # Generate individual from genome.
-            ind = Individual(genotype, None)
+            ind = Individual(parameter, genotype, None)
             
             if phenotype and ind.phenotype != phenotype:
                 s = "scripts.seed_PonyGE2.load_population\n" \

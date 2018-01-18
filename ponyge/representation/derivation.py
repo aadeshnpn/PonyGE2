@@ -63,14 +63,14 @@ def generate_tree(parameter, tree, genome, output, method, nodes, depth, max_dep
         # Iterate over all symbols in the chosen production.
         if symbol["type"] == "T":
             # The symbol is a terminal. Append new node to children.
-            tree.children.append(Tree(symbol["symbol"], tree))
+            tree.children.append(Tree(parameter, symbol["symbol"], tree))
             
             # Append the terminal to the output list.
             output.append(symbol["symbol"])
         
         elif symbol["type"] == "NT":
             # The symbol is a non-terminal. Append new node to children.
-            tree.children.append(Tree(symbol["symbol"], tree))
+            tree.children.append(Tree(parameter, symbol["symbol"], tree))
             
             # recurse on the new node.
             genome, output, nodes, d, max_depth = \
@@ -246,7 +246,7 @@ def pi_random_derivation(parameter, tree, max_depth):
             # Iterate over all symbols in the chosen production.
 
             # Create new child.
-            child = Tree(symbol["symbol"], node)
+            child = Tree(parameter, symbol["symbol"], node)
             
             # Append new node to children.
             node.children.append(child)
@@ -353,7 +353,7 @@ def pi_grow(parameter, tree, max_depth):
             # Iterate over all symbols in the chosen production.
 
             # Create new child.
-            child = Tree(symbol["symbol"], node)
+            child = Tree(parameter, symbol["symbol"], node)
 
             # Append new node to children.
             node.children.append(child)

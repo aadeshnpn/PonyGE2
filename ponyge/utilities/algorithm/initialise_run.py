@@ -241,7 +241,7 @@ def get_fit_func_imports(parameter):
         parameter.params[op] = return_attr_from_module(module_name, attr_name)
 
         # Initialise fitness function.
-        parameter.params[op] = parameter.params[op]()
+        parameter.params[op] = parameter.params[op](parameter)
 
 
 def return_attr_from_module(module_name, attr_name):

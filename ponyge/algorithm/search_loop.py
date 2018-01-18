@@ -27,7 +27,7 @@ def search_loop(parameter):
     individuals = initialisation(parameter, parameter.params['POPULATION_SIZE'])
 
     # Evaluate initial population
-    individuals = evaluate_fitness(parameter, individuals)
+    individuals = evaluate_fitness(individuals, parameter)
 
     # Generate statistics for run so far
     parameter.stats.get_stats(individuals)
@@ -38,10 +38,10 @@ def search_loop(parameter):
     # exit()
     # Traditional GE
     for generation in range(1, (parameter.params['GENERATIONS']+1)):
-        parameter.stats['gen'] = generation
+        parameter.stats.stats['gen'] = generation
 
         # New generation
-        individuals = parameter.params['STEP'](individuals)
+        individuals = parameter.params['STEP'](parameter, individuals)
 
     if parameter.params['MULTICORE']:
         # Close the workers pool (otherwise they'll live on forever).
@@ -68,7 +68,7 @@ def search_loop_from_state(parameter):
     
     # Traditional GE
     for generation in range(parameter.stats['gen'] + 1, (parameter.params['GENERATIONS'] + 1)):
-        parameter.stats['gen'] = generation
+        parameter.stats.stats['gen'] = generation
         
         # New generation
         individuals = parameter.params['STEP'](individuals)

@@ -27,7 +27,7 @@ def mutation(parameter, pop):
 
         else:
             # Perform mutation.
-            new_ind = parameter.params['MUTATION'](ind)
+            new_ind = parameter.params['MUTATION'](parameter, ind)
 
         # Check ind does not violate specified limits.
         check = check_ind(parameter, new_ind, "mutation")
@@ -41,7 +41,7 @@ def mutation(parameter, pop):
 
             else:
                 # Perform mutation.
-                new_ind = parameter.params['MUTATION'](ind)
+                new_ind = parameter.params['MUTATION'](parameter, ind)
 
             # Check ind does not violate specified limits.
             check = check_ind(parameter, new_ind, "mutation")
@@ -92,7 +92,7 @@ def int_flip_per_codon(parameter, ind):
             ind.genome[i] = randint(0, parameter.params['CODON_SIZE'])
 
     # Re-build a new individual with the newly mutated genetic information.
-    new_ind = individual.Individual(ind.genome, None)
+    new_ind = individual.Individual(parameter, ind.genome, None)
 
     return new_ind
 
@@ -120,7 +120,7 @@ def int_flip_per_ind(parameter, ind):
         ind.genome[idx] = randint(0, parameter.params['CODON_SIZE'])
 
     # Re-build a new individual with the newly mutated genetic information.
-    new_ind = individual.Individual(ind.genome, None)
+    new_ind = individual.Individual(parameter, ind.genome, None)
 
     return new_ind
 
@@ -162,7 +162,7 @@ def subtree(parameter, ind):
             max_depth = None
 
         # Mutate a new subtree.
-        generate_tree(new_tree, [], [], "random", 0, 0, 0, max_depth)
+        generate_tree(parameter, new_tree, [], [], "random", 0, 0, 0, max_depth)
 
         return ind_tree
 
@@ -179,7 +179,7 @@ def subtree(parameter, ind):
         ind.tree = subtree_mutate(parameter, ind.tree)
 
     # Re-build a new individual with the newly mutated genetic information.
-    ind = individual.Individual(None, ind.tree)
+    ind = individual.Individual(parameter, None, ind.tree)
 
     # Add in the previous tail.
     ind.genome = ind.genome + tail

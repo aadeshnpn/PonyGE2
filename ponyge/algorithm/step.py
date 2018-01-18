@@ -29,7 +29,7 @@ def step(parameter, individuals):
     new_pop = mutation(parameter, cross_pop)
 
     # Evaluate the fitness of the new population.
-    new_pop = evaluate_fitness(parameter, new_pop)
+    new_pop = evaluate_fitness(new_pop, parameter)
 
     # Replace the old population with the new population.
     individuals = replacement(parameter, new_pop, individuals)

@@ -62,7 +62,7 @@ def crossover_inds(parameter, parent_0, parent_1):
         raise Exception(s)
 
     # Perform crossover on ind_0 and ind_1.
-    inds = parameter.params['CROSSOVER'](ind_0, ind_1)
+    inds = parameter.params['CROSSOVER'](parameter, ind_0, ind_1)
 
     # Check each individual is ok (i.e. does not violate specified limits).
     checks = [check_ind(parameter, ind, "crossover") for ind in inds]
@@ -110,8 +110,8 @@ def variable_onepoint(parameter, p_0, p_1):
         c_0, c_1 = genome_0[:], genome_1[:]
 
     # Put the new chromosomes into new individuals.
-    ind_0 = individual.Individual(c_0, None)
-    ind_1 = individual.Individual(c_1, None)
+    ind_0 = individual.Individual(parameter, c_0, None)
+    ind_1 = individual.Individual(parameter, c_1, None)
 
     return [ind_0, ind_1]
 
@@ -146,8 +146,8 @@ def fixed_onepoint(parameter, p_0, p_1):
         c_0, c_1 = genome_0[:], genome_1[:]
     
     # Put the new chromosomes into new individuals.
-    ind_0 = individual.Individual(c_0, None)
-    ind_1 = individual.Individual(c_1, None)
+    ind_0 = individual.Individual(parameter, c_0, None)
+    ind_1 = individual.Individual(parameter, c_1, None)
     
     return [ind_0, ind_1]
 
@@ -182,8 +182,8 @@ def fixed_twopoint(parameter, p_0, p_1):
         c_0, c_1 = genome_0[:], genome_1[:]
 
     # Put the new chromosomes into new individuals.
-    ind_0 = individual.Individual(c_0, None)
-    ind_1 = individual.Individual(c_1, None)
+    ind_0 = individual.Individual(parameter, c_0, None)
+    ind_1 = individual.Individual(parameter, c_1, None)
     
     return [ind_0, ind_1]
 
@@ -220,8 +220,8 @@ def variable_twopoint(parameter, p_0, p_1):
         c_0, c_1 = genome_0[:], genome_1[:]
     
     # Put the new chromosomes into new individuals.
-    ind_0 = individual.Individual(c_0, None)
-    ind_1 = individual.Individual(c_1, None)
+    ind_0 = individual.Individual(parameter, c_0, None)
+    ind_1 = individual.Individual(parameter, c_1, None)
     
     return [ind_0, ind_1]
 
@@ -387,8 +387,8 @@ def subtree(parameter, p_0, p_1):
             ret_tree0, ret_tree1 = p_1.tree, p_0.tree
         
         # Initialise new individuals using the new trees.
-        ind0 = individual.Individual(None, ret_tree0)
-        ind1 = individual.Individual(None, ret_tree1)
+        ind0 = individual.Individual(parameter, None, ret_tree0)
+        ind1 = individual.Individual(parameter, None, ret_tree1)
 
         # Preserve tails.
         ind0.genome = ind0.genome + tail_0

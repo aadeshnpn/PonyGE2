@@ -16,7 +16,7 @@ def replacement(parameter, new_pop, old_pop):
     :param old_pop: The previous generation population.
     :return: Replaced population.
     """
-    return parameter.params['REPLACEMENT'](new_pop, old_pop)
+    return parameter.params['REPLACEMENT'](parameter, new_pop, old_pop)
 
 
 def generational(parameter, new_pop, old_pop):
@@ -74,7 +74,7 @@ def steady_state(parameter, individuals):
     while ind_counter < parameter.params['POPULATION_SIZE']:
         
         # Select parents from the original population.
-        parents = selection(individuals)
+        parents = selection(parameter, individuals)
 
         # Perform crossover on selected parents.
         cross_pop = crossover_inds(parameter, parents[0], parents[1])
@@ -88,7 +88,7 @@ def steady_state(parameter, individuals):
             new_pop = mutation(parameter, cross_pop)
         
             # Evaluate the fitness of the new population.
-            new_pop = evaluate_fitness(parameter, new_pop)
+            new_pop = evaluate_fitness(new_pop, parameter)
     
             # Sort the original population
             individuals.sort(reverse=True)
@@ -120,7 +120,7 @@ def nsga2_replacement(parameter, new_pop, old_pop):
     new_pop.extend(old_pop)
 
     # Compute the pareto fronts and crowding distance
-    pareto = compute_pareto_metrics(new_pop)
+    pareto = compute_pareto_metrics(parameter, new_pop)
 
     # Size of the new population
     pop_size = parameter.params['POPULATION_SIZE']

@@ -27,7 +27,7 @@ def save_stats_to_file(parameter, stats, end=False):
     elif end:
         filename = path.join(parameter.params['FILE_PATH'], "stats.tsv")
         savefile = open(filename, 'a')
-        for item in parameters.trackers.stats_list:
+        for item in parameter.trackers.stats_list:
             for stat in sorted(item.keys()):
                 savefile.write(str(item[stat]) + "\t")
             savefile.write("\n")
@@ -105,7 +105,7 @@ def save_first_front_to_file(parameter, stats, end=False, name="first"):
     # Create front folder.
     makedirs(parameter.params['FILE_PATH'])
 
-    for i, ind in enumerate(parameters.trackers.best_ever):
+    for i, ind in enumerate(parameter.trackers.best_ever):
         # Save each individual in the first front to file.
         save_best_ind_to_file(stats, ind, end, name=str(i))
 
