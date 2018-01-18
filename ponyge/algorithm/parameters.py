@@ -244,12 +244,12 @@ def set_params(command_line_args, create_files=True):
     :return: Nothing.
     """
 
-    from utilities.algorithm.initialise_run import initialise_run_params
-    from utilities.algorithm.initialise_run import set_param_imports
-    from utilities.fitness.math_functions import return_one_percent
-    from utilities.algorithm.command_line_parser import parse_cmd_args
-    from utilities.stats import trackers, clean_stats
-    from representation import grammar
+    from ponyge.utilities.algorithm.initialise_run import initialise_run_params
+    from ponyge.utilities.algorithm.initialise_run import set_param_imports
+    from ponyge.utilities.fitness.math_functions import return_one_percent
+    from ponyge.utilities.algorithm.command_line_parser import parse_cmd_args
+    from ponyge.utilities.stats import trackers, clean_stats
+    from ponyge.representation import grammar
 
     cmd_args, unknown = parse_cmd_args(command_line_args)
 
@@ -272,13 +272,13 @@ def set_params(command_line_args, create_files=True):
 
     if params['LOAD_STATE']:
         # Load run from state.
-        from utilities.algorithm.state import load_state
+        from ponyge.utilities.algorithm.state import load_state
 
         # Load in state information.
         individuals = load_state(params['LOAD_STATE'])
 
         # Set correct search loop.
-        from algorithm.search_loop import search_loop_from_state
+        from ponyge.algorithm.search_loop import search_loop_from_state
         params['SEARCH_LOOP'] = search_loop_from_state
 
         # Set population.
@@ -348,7 +348,7 @@ def set_params(command_line_args, create_files=True):
         if params['TARGET_SEED_FOLDER']:
 
             # Import population loading function.
-            from operators.initialisation import load_population
+            from ponyge.operators.initialisation import load_population
 
             # A target folder containing seed individuals has been given.
             params['SEED_INDIVIDUALS'] = load_population(
@@ -358,7 +358,7 @@ def set_params(command_line_args, create_files=True):
             # A single seed phenotype has been given. Parse and run.
 
             # Import GE LR Parser.
-            from scripts import GE_LR_parser
+            from ponyge.scripts import GE_LR_parser
 
             # Parse seed individual and store in params.
             params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
