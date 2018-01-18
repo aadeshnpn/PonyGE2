@@ -3,7 +3,7 @@ from multiprocessing import Process, Queue
 
 import ponyge.fitness.regex.testing.RegexTestGenerator as TestGen
 from ponyge.fitness.regex.testing.RegexTimer import time_regex_test_case
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 from ponyge.stats.stats import stats
 
@@ -26,11 +26,12 @@ class RegexEval(base_ff):
     q = Queue()
     pstartup, prunner = None, None
     
-    def __init__(self):
+    def __init__(self, parameter):
         # Initialise base fitness function class.
         super().__init__()
+        self.parameter = parameter
         
-        if params['MULTICORE']:
+        if parameter.params['MULTICORE']:
             s = "fitness.regex.RegexEval.RegexEval\n" \
                 "Error: Multicore evaluation cannot be used with RegexEval " \
                 "fitness function, as this fitness function already manages " \
@@ -112,7 +113,7 @@ class RegexEval(base_ff):
             # fitness function as the representation.individual.Individual
             # class has not yet been instantiated.
             
-            RegexEval.seed_regex = params['SEED_INDIVIDUALS'][0]
+            RegexEval.seed_regex = self.parameter.params['SEED_INDIVIDUALS'][0]
     
             RegexEval.test_cases = TestGen.generate_test_suite(
                 RegexEval.seed_regex.phenotype)

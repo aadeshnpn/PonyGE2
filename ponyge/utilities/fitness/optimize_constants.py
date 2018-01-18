@@ -2,11 +2,10 @@ import scipy
 
 import re
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.utilities.fitness.math_functions import *
 
-
-def optimize_constants(x, y, ind):
+def optimize_constants(parameter, x, y, ind):
     """
     Use gradient descent to search for values for the constants in
     ind.phenotype which minimise loss.
@@ -31,7 +30,7 @@ def optimize_constants(x, y, ind):
     f = eval("lambda x, c: " + s)
 
     # Pre-load the error metric fitness function.
-    loss = params['ERROR_METRIC']
+    loss = parameter.params['ERROR_METRIC']
 
     if n_consts == 0:
         # ind doesn't refer to c: no need to optimize

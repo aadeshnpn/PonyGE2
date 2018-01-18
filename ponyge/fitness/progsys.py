@@ -1,4 +1,4 @@
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 
 from os import path
@@ -24,15 +24,15 @@ class progsys(base_ff):
     FORCOUNTER = "forCounter"
     FORCOUNTERUNNUMBERED = "forCounter%"
 
-    def __init__(self):
+    def __init__(self, parameter):
         # Initialise base fitness function class.
         super().__init__()
         
         self.training, self.test, self.embed_header, self.embed_footer = \
-            self.get_data(params['DATASET_TRAIN'], params['DATASET_TEST'],
-                          params['GRAMMAR_FILE'])
+            self.get_data(parameter.params['DATASET_TRAIN'], parameter.params['DATASET_TEST'],
+                          parameter.params['GRAMMAR_FILE'])
         self.eval = self.create_eval_process()
-        if params['MULTICORE']:
+        if parameter.params['MULTICORE']:
             print("Warming: Multicore is not supported with progsys "
                   "as fitness function.\n"
                   "Fitness function only allows sequential evaluation.")

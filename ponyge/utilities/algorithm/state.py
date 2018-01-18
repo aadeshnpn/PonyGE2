@@ -3,7 +3,7 @@ from os import path
 import random
 
 
-def create_state(individuals):
+def create_state(parameter, individuals):
     """
     Create a dictionary representing the current state of an evolutionary
     run. The state includes the current population, the current random state,
@@ -14,9 +14,9 @@ def create_state(individuals):
     :return: The complete state of a run.
     """
     
-    from ponyge.algorithm.parameters import params
-    from ponyge.stats.stats import stats
-    from ponyge.utilities.stats import trackers
+    # from ponyge.algorithm.parameters import params
+    # from ponyge.stats.stats import stats
+    # from ponyge.utilities.stats import trackers
     from time import time
 
     # Get time.
@@ -29,16 +29,16 @@ def create_state(individuals):
     # dictionary contains functions and class instances, we need to replace
     # these with the names of their respective modules, since module
     # instances are not picklable.
-    pickle_params = {param: (check_name(params[param]) if callable(
-        params[param]) else params[param]) for param in params}
+    pickle_params = {param: (check_name(parameter.params[param]) if callable(
+        parameter.params[param]) else parameter.params[param]) for param in parameter.params}
 
     # Create a picklable version of the trackers module.
-    pickle_trackers = {i: getattr(trackers, i) for i in dir(trackers)
+    pickle_trackers = {i: getattr(parameter.trackers, i) for i in dir(parameter.trackers)
                        if not i.startswith("__")}
 
     # Create state dictionary
     state = {"trackers": pickle_trackers, "params": pickle_params,
-             "stats": stats, "individuals": individuals,
+             "stats": parameter.stats, "individuals": individuals,
              "random_state": random_state, "time": state_time}
     
     save_state(state)
@@ -63,7 +63,7 @@ def save_state(state):
     state_file.close()
 
 
-def load_state(state):
+def load_state(parameter, state):
     """
     Load in the state of a previous run.
     
@@ -82,13 +82,13 @@ def load_state(state):
     state_file.close()
     
     # Set state.
-    individuals = set_state(loaded_state)
+    individuals = set_state(parameter, loaded_state)
     
     # Return individuals.
     return individuals
 
 
-def set_state(state):
+def set_state(parameter, state):
     """
     Given a dictionary representing the state of an evolutionary run, set all
     aspects of the system to re-create that state. The state includes the
@@ -102,10 +102,10 @@ def set_state(state):
     :return: A population of individuals.
     """
 
-    from algorithm.parameters import params
-    from utilities.algorithm.initialise_run import set_param_imports
-    from stats.stats import stats
-    from utilities.stats import trackers
+    # from algorithm.parameters import params
+    from ponyge.utilities.algorithm.initialise_run import set_param_imports
+    # from ponyge.stats.stats import stats
+    # from ponyge.utilities.stats import trackers
     from time import time
 
     # Set random state.
@@ -113,22 +113,22 @@ def set_state(state):
     
     # Set stats.
     for stat in state['stats']:
-        stats[stat] = state['stats'][stat]
+        parameter.stats[stat] = state['stats'][stat]
         
     # Set trackers.
     for tracker in state['trackers']:
-        setattr(trackers, tracker, state['trackers'][tracker])
+        setattr(parameter.trackers, tracker, state['trackers'][tracker])
 
     # Set parameters.
     for param in state['params']:
-        params[param] = state['params'][param]
+        parameter.params[param] = state['params'][param]
 
     # Set correct param imports for specified function options, including
     # error metrics and fitness functions.
-    set_param_imports()
+    set_param_imports(parameter)
     
     # Set time adjustment to account for old time.
-    stats['time_adjust'] = time() - state['time']
+    parameter.stats['time_adjust'] = time() - state['time']
 
     return state['individuals']
 

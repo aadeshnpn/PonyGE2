@@ -1,7 +1,7 @@
 import numpy as np
 
 from ponyge.algorithm.mapper import mapper
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 
 
 class Individual(object):
@@ -9,7 +9,7 @@ class Individual(object):
     A GE individual.
     """
 
-    def __init__(self, genome, ind_tree, map_ind=True):
+    def __init__(self, parameter, genome, ind_tree, map_ind=True):
         """
         Initialise an instance of the individual class (i.e. create a new
         individual).
@@ -21,17 +21,19 @@ class Individual(object):
         individual needs to be mapped.
         """
 
+        self.parameter = parameter
+
         if map_ind:
             # The individual needs to be mapped from the given input
             # parameters.
             self.phenotype, self.genome, self.tree, self.nodes, self.invalid, \
-                self.depth, self.used_codons = mapper(genome, ind_tree)
+                self.depth, self.used_codons = mapper(parameter, genome, ind_tree)
 
         else:
             # The individual does not need to be mapped.
             self.genome, self.tree = genome, ind_tree
 
-        self.fitness = params['FITNESS_FUNCTION'].default_fitness
+        self.fitness = parameter.params['FITNESS_FUNCTION'].default_fitness
         self.runtime_error = False
         self.name = None
 
@@ -49,7 +51,7 @@ class Individual(object):
         greater than the comparison individual.
         """
 
-        if params['FITNESS_FUNCTION'].maximise:
+        if self.parameter.params['FITNESS_FUNCTION'].maximise:
             if np.isnan(self.fitness):
                 # Self.fitness is not a number, return True as it doesn't
                 # matter what the other fitness is.
@@ -84,7 +86,7 @@ class Individual(object):
         greater than or equal to the comparison individual.
         """
 
-        if params['FITNESS_FUNCTION'].maximise:
+        if self.parameter.params['FITNESS_FUNCTION'].maximise:
             if np.isnan(self.fitness):
                 # Self.fitness is not a number, return True as it doesn't
                 # matter what the other fitness is.
@@ -122,7 +124,7 @@ class Individual(object):
         :return: A unique copy of the individual.
         """
 
-        if not params['GENOME_OPERATIONS']:
+        if not self.parameter.params['GENOME_OPERATIONS']:
             # Create a new unique copy of the tree.
             new_tree = self.tree.__copy__()
 
@@ -130,7 +132,7 @@ class Individual(object):
             new_tree = None
 
         # Create a copy of self by initialising a new individual.
-        new_ind = Individual(list(self.genome), new_tree, map_ind=False)
+        new_ind = Individual(self.parameter, list(self.genome), new_tree, map_ind=False)
 
         # Set new individual parameters (no need to map genome to new
         # individual).
@@ -153,7 +155,7 @@ class Individual(object):
         """
 
         # Evaluate fitness using specified fitness function.
-        self.fitness = params['FITNESS_FUNCTION'](self)
+        self.fitness = self.parameter.params['FITNESS_FUNCTION'](self)
 
-        if params['MULTICORE']:
+        if self.parameter.params['MULTICORE']:
             return self

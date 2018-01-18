@@ -3,9 +3,10 @@ from ponyge.operators.crossover import crossover
 from ponyge.operators.mutation import mutation
 from ponyge.operators.replacement import replacement, steady_state
 from ponyge.operators.selection import selection
-from ponyge.stats.stats import get_stats
+# from ponyge.stats.stats import get_stats
 
-def step(individuals):
+
+def step(parameter, individuals):
     """
     Runs a single generation of the evolutionary algorithm process:
         Selection
@@ -19,27 +20,27 @@ def step(individuals):
     """
 
     # Select parents from the original population.
-    parents = selection(individuals)
+    parents = selection(parameter, individuals)
 
     # Crossover parents and add to the new population.
-    cross_pop = crossover(parents)
+    cross_pop = crossover(parameter, parents)
 
     # Mutate the new population.
-    new_pop = mutation(cross_pop)
+    new_pop = mutation(parameter, cross_pop)
 
     # Evaluate the fitness of the new population.
-    new_pop = evaluate_fitness(new_pop)
+    new_pop = evaluate_fitness(parameter, new_pop)
 
     # Replace the old population with the new population.
-    individuals = replacement(new_pop, individuals)
+    individuals = replacement(parameter, new_pop, individuals)
 
     # Generate statistics for run so far
-    get_stats(individuals)
+    parameter.stats.get_stats(individuals)
     
     return individuals
 
 
-def steady_state_step(individuals):
+def steady_state_step(parameter, individuals):
     """
     Runs a single generation of the evolutionary algorithm process,
     using steady state replacement.
@@ -49,6 +50,6 @@ def steady_state_step(individuals):
     :return: The next generation of the population.
     """
     
-    individuals = steady_state(individuals)
+    individuals = steady_state(parameter, individuals)
     
     return individuals 

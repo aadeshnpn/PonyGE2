@@ -1,9 +1,9 @@
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 
 
 class Tree:
 
-    def __init__(self, expr, parent):
+    def __init__(self, parameter, expr, parent):
         """
         Initialise an instance of the tree class.
         
@@ -18,6 +18,7 @@ class Tree:
         self.root = expr
         self.children = []
         self.snippet = None
+        self.parameter = parameter
 
     def __str__(self):
         """
@@ -55,7 +56,7 @@ class Tree:
         """
 
         # Copy current tree by initialising a new instance of the tree class.
-        tree_copy = Tree(self.root, self.parent)
+        tree_copy = Tree(self.parameter, self.root, self.parent)
         
         # Set node parameters.
         tree_copy.codon, tree_copy.depth = self.codon, self.depth
@@ -133,7 +134,7 @@ class Tree:
         
         # Find all non-terminal children of the current node.
         NT_kids = [kid for kid in self.children if kid.root in
-                   params['BNF_GRAMMAR'].non_terminals]
+                   self.parameter.params['BNF_GRAMMAR'].non_terminals]
         
         for child in NT_kids:
             if NT_kids:

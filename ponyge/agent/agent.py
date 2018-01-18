@@ -6,6 +6,7 @@ from ponyge.operators.mutation import mutation
 from ponyge.operators.replacement import replacement, steady_state
 from ponyge.operators.selection import selection
 
+
 class Agent():
     """
     Class representing individual robots/agents. The agents has three main methods.

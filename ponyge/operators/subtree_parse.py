@@ -2,13 +2,13 @@ import re
 from copy import copy
 from itertools import zip_longest
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.representation import individual, tree
 from ponyge.utilities.representation.check_methods import get_output, generate_codon
-from ponyge.utilities.stats import trackers
+# from ponyge.utilities.stats import trackers
 
 
-def combine_snippets():
+def combine_snippets(parameter):
     """
     As the snippets repository grows, we can start to combine
     neighboring snippets to build bigger snippets. Eventually we hope this
@@ -19,16 +19,16 @@ def combine_snippets():
     """
 
     # Find the number of snippets at T.
-    original_snippets = sorted(trackers.snippets.keys())
+    original_snippets = sorted(parameter.trackers.snippets.keys())
 
     # Perform first pass of reduction.
-    reduce_trees()
+    reduce_trees(parameter)
 
     # Delete obsolete snippets.
-    remove_old_snippets()
+    remove_old_snippets(parameter)
 
     # Get new snippets list.
-    updated_snippets = sorted(trackers.snippets.keys())
+    updated_snippets = sorted(parameter.trackers.snippets.keys())
 
     # Initialise counter for reduction interations.
     no_passes = 1
@@ -40,13 +40,13 @@ def combine_snippets():
         pre_updated_snippets = copy(updated_snippets)
 
         # Perform reduction.
-        reduce_trees()
+        reduce_trees(parameter)
 
         # Delete obsolete snippets.
-        remove_old_snippets()
+        remove_old_snippets(parameter)
 
         # Get new snippets list.
-        updated_snippets = sorted(trackers.snippets.keys())
+        updated_snippets = sorted(parameter.trackers.snippets.keys())
 
         # Set new T as old T+1
         original_snippets = pre_updated_snippets
@@ -55,7 +55,7 @@ def combine_snippets():
         no_passes += 1
 
 
-def reduce_trees():
+def reduce_trees(parameter):
     """
     Iterates through all snippets in the snippets dictionary and reduces
     snippets to make larger snippets.
@@ -64,12 +64,12 @@ def reduce_trees():
     """
 
     # Get list of all reduction NTs.
-    reduce_NTs = params['BNF_GRAMMAR'].concat_NTs
+    reduce_NTs = parameter.params['BNF_GRAMMAR'].concat_NTs
 
     # Sort snippets keys.
     sorted_keys = sorted([[get_num_from_str(snippet),
                            get_NT_from_str(snippet),
-                           snippet] for snippet in trackers.snippets.keys()])
+                           snippet] for snippet in parameter.trackers.snippets.keys()])
 
     # Iterate over all snippets.
     for snippet_info in sorted_keys:
@@ -101,9 +101,9 @@ def reduce_trees():
                     # snippet already exists.
 
                     # Child is current snippet.
-                    child = [[snippet, trackers.snippets[snippet]]]
+                    child = [[snippet, parameter.trackers.snippets[snippet]]]
 
-                    generate_key_and_check(start, end, reduce, child)
+                    generate_key_and_check(parameter, start, end, reduce, child)
 
                 else:
                     # Find the index of the snippet root in the current
@@ -127,7 +127,7 @@ def reduce_trees():
                             # something before it.
                             break
 
-                        elif end == len(params['TARGET']) and loc != \
+                        elif end == len(parameter.params['TARGET']) and loc != \
                                 NT_locs[-1]:
                             # The current snippet is at the end of the target
                             # string, but we are trying to reduce_trees it with
@@ -150,7 +150,7 @@ def reduce_trees():
                         children = [[] for _ in range(len(NTs))]
 
                         # Set original snippet into children.
-                        children[loc] = [snippet, trackers.snippets[snippet]]
+                        children[loc] = [snippet, parameter.trackers.snippets[snippet]]
 
                         # Generate ordered list of alternating indexes of Ts
                         # and NTs to reduce_trees with a given original NT.
@@ -158,7 +158,7 @@ def reduce_trees():
                         alt_cs = [x for x in list(sum(b, ())) if x is not None]
                         alt_cs.remove(loc)
 
-                        def check_reductions(alt_cs, pre, aft, idx, children):
+                        def check_reductions(parameter, alt_cs, pre, aft, idx, children):
                             """
                             Given a list of the indexes of potential children, find
                             snippets which match adjacent portions of the target
@@ -202,7 +202,7 @@ def reduce_trees():
                                         # Get portion of target string to match.
                                         end_point = aft + len(check)
 
-                                        target = params['TARGET'][aft:end_point]
+                                        target = parameter.params['TARGET'][aft:end_point]
 
                                         if target == check:
                                             # The current terminal matches the same
@@ -215,7 +215,7 @@ def reduce_trees():
                                             aft += len(check)
 
                                             # Create new tree from this terminal.
-                                            T_tree = tree.Tree(check, None)
+                                            T_tree = tree.Tree(parameter, check, None)
 
                                             # Add to children.
                                             children[child_idx] = [key, T_tree]
@@ -223,7 +223,7 @@ def reduce_trees():
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre,
+                                                check_reductions(parameter, alt_cs, pre,
                                                                      aft, idx,
                                                                      children)
 
@@ -254,13 +254,13 @@ def reduce_trees():
 
                                             # Add to children.
                                             children[child_idx] = [match[2],
-                                                              trackers.snippets[
+                                                              parameter.trackers.snippets[
                                                                   match[2]]]
 
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre,
+                                                check_reductions(parameter, alt_cs, pre,
                                                                  aft_c, idx,
                                                                  children)
 
@@ -280,7 +280,7 @@ def reduce_trees():
                                         # Get portion of target string to match.
                                         start_point = pre - len(check)
 
-                                        target = params['TARGET'][
+                                        target = parameter.params['TARGET'][
                                                  start_point:pre]
 
                                         if target == check:
@@ -294,7 +294,7 @@ def reduce_trees():
                                             pre -= len(check)
 
                                             # Create new tree from this terminal.
-                                            T_tree = tree.Tree(check, None)
+                                            T_tree = tree.Tree(parameter, check, None)
 
                                             # Add to children.
                                             children[child_idx] = [key, T_tree]
@@ -302,7 +302,7 @@ def reduce_trees():
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre,
+                                                check_reductions(parameter, alt_cs, pre,
                                                                      aft, idx,
                                                                      children)
 
@@ -333,13 +333,13 @@ def reduce_trees():
 
                                             # Add to children.
                                             children[child_idx] = [match[2],
-                                                              trackers.snippets[
+                                                              parameter.trackers.snippets[
                                                                   match[2]]]
 
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre_c,
+                                                check_reductions(parameter, alt_cs, pre_c,
                                                                  aft, idx,
                                                                  children)
 
@@ -366,7 +366,7 @@ def reduce_trees():
                                             start_point = pre - len(check)
                                             end_point = pre
 
-                                        target = params['TARGET'][
+                                        target = parameter.params['TARGET'][
                                                  start_point:end_point]
 
                                         if target == check:
@@ -389,7 +389,7 @@ def reduce_trees():
                                             key = str([start_point, end_point])
 
                                             # Create new tree from this terminal.
-                                            T_tree = tree.Tree(check, None)
+                                            T_tree = tree.Tree(parameter, check, None)
 
                                             # Add to children.
                                             children[child_idx] = [key, T_tree]
@@ -397,7 +397,7 @@ def reduce_trees():
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre,
+                                                check_reductions(parameter, alt_cs, pre,
                                                                      aft, idx,
                                                                      children)
 
@@ -443,13 +443,13 @@ def reduce_trees():
 
                                             # Add to children.
                                             children[child_idx] = [match[2],
-                                                              trackers.snippets[
+                                                              parameter.trackers.snippets[
                                                                   match[2]]]
 
                                             if alt_cs:
                                                 # Recurse to find the next piece of
                                                 # the puzzle.
-                                                check_reductions(alt_cs, pre_c,
+                                                check_reductions(parameter, alt_cs, pre_c,
                                                                      aft_c, idx,
                                                                      children)
 
@@ -457,14 +457,14 @@ def reduce_trees():
                                 # We have compiled a full set of potneital
                                 # children to reduce_trees. Generate a key and check
                                 # if it exists.
-                                generate_key_and_check(pre, aft, reduce,
+                                generate_key_and_check(parameter, pre, aft, reduce,
                                                        children)
 
                         # Check whether a reduction can be performed.
-                        check_reductions(alt_cs, pre, aft, 0, children)
+                        check_reductions(parameter, alt_cs, pre, aft, 0, children)
 
 
-def generate_key_and_check(pre, aft, reduce, children):
+def generate_key_and_check(parameter, pre, aft, reduce, children):
     """
     Will generate a snippet key and check if it exists in the repository. If
     snippet is not in the repository, adds it.
@@ -488,7 +488,7 @@ def generate_key_and_check(pre, aft, reduce, children):
     # Generate key for proposed reduction
     new_key = " ".join([str([pre, aft]), reduce[1]])
 
-    if new_key in trackers.snippets or new_key in trackers.deleted_snippets:
+    if new_key in parameter.trackers.snippets or new_key in parameter.trackers.deleted_snippets:
         # No need to reduce_trees as a perfectly good
         # solution already exists.
         pass
@@ -504,7 +504,7 @@ def generate_key_and_check(pre, aft, reduce, children):
     return new_key, pre, aft
 
 
-def remove_old_snippets():
+def remove_old_snippets(parameter):
     """
     Iterate over the snippets repository and remove snippets which are
     sub-trees of larger snippets as these snippets are useless now.
@@ -512,14 +512,14 @@ def remove_old_snippets():
     :return: Nothing.
     """
 
-    for snippet in sorted(trackers.snippets.keys()):
+    for snippet in sorted(parameter.trackers.snippets.keys()):
         # Iterate over all snippets.
 
-        if snippet in trackers.snippets:
-            delete_snippet(trackers.snippets[snippet])
+        if snippet in parameter.trackers.snippets:
+            delete_snippet(parameter, trackers.snippets[snippet])
 
 
-def delete_snippet(self):
+def delete_snippet(parameter, self):
     """
     Given a tree structure, dive down through the tree recursively and delete
     all child snippets.
@@ -529,22 +529,22 @@ def delete_snippet(self):
     """
 
     if self.parent and self.snippet and self.snippet in trackers.snippets and \
-        len(params['BNF_GRAMMAR'].concat_NTs[self.root]) == 1:
+        len(parameter.params['BNF_GRAMMAR'].concat_NTs[self.root]) == 1:
 
         # Delete this snippet as it's (hopefully) useless now.
-        del trackers.snippets[self.snippet]
+        del parameter.trackers.snippets[self.snippet]
 
         # Append deleted snippet to deleted snippets list.
-        trackers.deleted_snippets.append(self.snippet)
+        parameter.trackers.deleted_snippets.append(self.snippet)
 
     if self.children:
         # Recurse through all children.
 
         for child in self.children:
-            delete_snippet(child)
+            delete_snippet(parameter, child)
 
 
-def create_snippet(parent, children, choice, key):
+def create_snippet(parameter, parent, children, choice, key):
     """
     Given a parent NT and a list of child trees, create a new tree that acts as
     the parent of the given children. Generates this tree as a snippet and
@@ -558,10 +558,10 @@ def create_snippet(parent, children, choice, key):
     """
 
     # Initialise new instance of the tree class to act as new snippet.
-    new_tree = tree.Tree(parent, None)
+    new_tree = tree.Tree(parameter, parent, None)
 
     # Generate a codon to match the given production choice.
-    new_tree.codon = generate_codon(parent, choice)
+    new_tree.codon = generate_codon(parameter, parent, choice)
 
     # Save the snippet key of this tree.
     new_tree.snippet = key
@@ -574,7 +574,7 @@ def create_snippet(parent, children, choice, key):
         child.parent = new_tree
 
     # Add new snippet to snippets dictionary
-    trackers.snippets[key] = new_tree
+    parameter.trackers.snippets[key] = new_tree
 
 
 def get_num_from_str(string):
@@ -612,7 +612,7 @@ def get_NT_from_str(string):
     return index[0]
 
 
-def check_snippets_for_solution():
+def check_snippets_for_solution(parameter):
     """
     Check the snippets repository to see if we have built up the correct
     solution yet.
@@ -638,7 +638,7 @@ def check_snippets_for_solution():
     # Get the phenotype of the largest snippet
     largest_snippet = get_output(trackers.snippets[biggest_snippet[1]])
 
-    if largest_snippet != params['REVERSE_MAPPING_TARGET']:
+    if largest_snippet != parameter.params['REVERSE_MAPPING_TARGET']:
         # The solution doesn't match the target string.
 
         # Get the location of the phenotype of the largest snippet on the
@@ -654,15 +654,15 @@ def check_snippets_for_solution():
             "       Solution: \t %s %s\n" \
             "       Check grammar file `%s` to ensure the grammar is capable" \
             " of producing the exact target string." % \
-            (params['REVERSE_MAPPING_TARGET'], spaces, largest_snippet,
-             params['GRAMMAR_FILE'])
+            (parameter.params['REVERSE_MAPPING_TARGET'], spaces, largest_snippet,
+             parameter.params['GRAMMAR_FILE'])
         raise Exception(s)
 
-    if largest_snippet == params['REVERSE_MAPPING_TARGET']:
+    if largest_snippet == parameter.params['REVERSE_MAPPING_TARGET']:
         # We have a perfect match
 
         # Generate individual that represents the perfect solution.
-        ind = individual.Individual(None, trackers.snippets[biggest_snippet[
+        ind = individual.Individual(parameter, None, parameter.trackers.snippets[biggest_snippet[
             1]])
 
         # Return ind.

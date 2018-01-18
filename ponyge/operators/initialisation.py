@@ -2,7 +2,7 @@ from math import floor
 from os import path, getcwd, listdir
 from random import shuffle, randint
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.representation import individual
 from ponyge.representation.derivation import generate_tree, pi_grow
 from ponyge.representation.individual import Individual
@@ -11,7 +11,7 @@ from ponyge.scripts import GE_LR_parser
 from ponyge.utilities.representation.python_filter import python_filter
 
 
-def initialisation(size):
+def initialisation(parameter, size):
     """
     Perform selection on a population in order to select a population of
     individuals for variation.
@@ -24,29 +24,29 @@ def initialisation(size):
     # Decrease initialised population size by the number of seed individuals
     # (if any) to ensure that the total initial population size does not exceed
     # the limit.
-    size -= len(params['SEED_INDIVIDUALS'])
+    size -= len(parameter.params['SEED_INDIVIDUALS'])
 
     # Initialise empty population.
-    individuals = params['INITIALISATION'](size)
+    individuals = parameter.params['INITIALISATION'](size)
 
     # Add seed individuals (if any) to current population.
-    individuals.extend(params['SEED_INDIVIDUALS'])
+    individuals.extend(parameter.params['SEED_INDIVIDUALS'])
 
     return individuals
     
 
-def sample_genome():
+def sample_genome(parameter):
     """
     Generate a random genome, uniformly.
     
     :return: A randomly generated genome.
     """
-    genome = [randint(0, params['CODON_SIZE']) for _ in
-              range(params['INIT_GENOME_LENGTH'])]
+    genome = [randint(0, parameter.params['CODON_SIZE']) for _ in
+              range(parameter.params['INIT_GENOME_LENGTH'])]
     return genome
 
 
-def uniform_genome(size):
+def uniform_genome(parameter, size):
     """
     Create a population of individuals by sampling genomes uniformly.
 
@@ -54,10 +54,10 @@ def uniform_genome(size):
     :return: A full population composed of randomly generated individuals.
     """
 
-    return [individual.Individual(sample_genome(), None) for _ in range(size)]
+    return [individual.Individual(sample_genome(parameter), None) for _ in range(size)]
 
 
-def uniform_tree(size):
+def uniform_tree(parameter, size):
     """
     Create a population of individuals by generating random derivation trees.
      
@@ -65,11 +65,11 @@ def uniform_tree(size):
     :return: A full population composed of randomly generated individuals.
     """
     
-    return [generate_ind_tree(params['MAX_TREE_DEPTH'],
+    return [generate_ind_tree(parameter, parameter.params['MAX_TREE_DEPTH'],
                               "random") for _ in range(size)]
     
 
-def seed_individuals(size):
+def seed_individuals(parameter, size):
     """
     Create a population of size where all individuals are copies of the same
     seeded individuals.
@@ -79,7 +79,7 @@ def seed_individuals(size):
     """
     
     # Get total number of seed inds.
-    no_seeds = len(params['SEED_INDIVIDUALS'])
+    no_seeds = len(parameter.params['SEED_INDIVIDUALS'])
     
     # Initialise empty population.
     individuals = []
@@ -90,7 +90,7 @@ def seed_individuals(size):
         # Divide requested population size by the number of seeds.
         num_per_seed = floor(size/no_seeds)
         
-        for ind in params['SEED_INDIVIDUALS']:
+        for ind in parameter.params['SEED_INDIVIDUALS']:
         
             if not isinstance(ind, individual.Individual):
                 # The seed object is not a PonyGE individual.
@@ -113,7 +113,7 @@ def seed_individuals(size):
         raise Exception(s)
     
 
-def rhh(size):
+def rhh(parameter, size):
     """
     Create a population of size using ramped half and half (or sensible
     initialisation) and return.
@@ -123,15 +123,15 @@ def rhh(size):
     """
 
     # Calculate the range of depths to ramp individuals from.
-    depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
-                   params['MAX_INIT_TREE_DEPTH']+1)
+    depths = range(parameter.params['BNF_GRAMMAR'].min_ramp + 1,
+                   parameter.params['MAX_INIT_TREE_DEPTH']+1)
     population = []
 
     if size < 2:
         # If the population size is too small, can't use RHH initialisation.
         print("Error: population size too small for RHH initialisation.")
         print("Returning randomly built trees.")
-        return [individual.Individual(sample_genome(), None)
+        return [individual.Individual(sample_genome(parameter), None)
                 for _ in range(size)]
 
     elif not depths:
@@ -167,13 +167,13 @@ def rhh(size):
             for i in range(times):
 
                 # Generate individual using "Grow"
-                ind = generate_ind_tree(depth, "random")
+                ind = generate_ind_tree(parameter, depth, "random")
 
                 # Append individual to population
                 population.append(ind)
 
                 # Generate individual using "Full"
-                ind = generate_ind_tree(depth, "full")
+                ind = generate_ind_tree(parameter, depth, "full")
 
                 # Append individual to population
                 population.append(ind)
@@ -188,13 +188,13 @@ def rhh(size):
             depth = depths.pop()
 
             # Generate individual using "Grow"
-            ind = generate_ind_tree(depth, "random")
+            ind = generate_ind_tree(parameter, depth, "random")
 
             # Append individual to population
             population.append(ind)
 
             # Generate individual using "Full"
-            ind = generate_ind_tree(depth, "full")
+            ind = generate_ind_tree(parameter, depth, "full")
 
             # Append individual to population
             population.append(ind)
@@ -202,7 +202,7 @@ def rhh(size):
         return population
 
 
-def PI_grow(size):
+def PI_grow(parameter, size):
     """
     Create a population of size using Position Independent Grow and return.
 
@@ -211,8 +211,8 @@ def PI_grow(size):
     """
 
     # Calculate the range of depths to ramp individuals from.
-    depths = range(params['BNF_GRAMMAR'].min_ramp + 1,
-                   params['MAX_INIT_TREE_DEPTH']+1)
+    depths = range(parameter.params['BNF_GRAMMAR'].min_ramp + 1,
+                   parameter.params['MAX_INIT_TREE_DEPTH']+1)
     population = []
 
     if size < 2:
@@ -220,7 +220,7 @@ def PI_grow(size):
         # initialisation.
         print("Error: population size too small for PI Grow initialisation.")
         print("Returning randomly built trees.")
-        return [individual.Individual(sample_genome(), None)
+        return [individual.Individual(sample_genome(parameter), None)
                 for _ in range(size)]
 
     elif not depths:
@@ -248,7 +248,7 @@ def PI_grow(size):
             for i in range(times):
 
                 # Generate individual using "Grow"
-                ind = generate_PI_ind_tree(depth)
+                ind = generate_PI_ind_tree(parameter, depth)
 
                 # Append individual to population
                 population.append(ind)
@@ -263,7 +263,7 @@ def PI_grow(size):
             depth = depths.pop()
 
             # Generate individual using "Grow"
-            ind = generate_PI_ind_tree(depth)
+            ind = generate_PI_ind_tree(parameter, depth)
 
             # Append individual to population
             population.append(ind)
@@ -271,7 +271,7 @@ def PI_grow(size):
         return population
 
 
-def generate_ind_tree(max_depth, method):
+def generate_ind_tree(parameter, max_depth, method):
     """
     Generate an individual using a given subtree initialisation method.
 
@@ -281,7 +281,7 @@ def generate_ind_tree(max_depth, method):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
+    ind_tree = Tree(str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
     genome, output, nodes, _, depth = generate_tree(ind_tree, [], [], method,
@@ -290,7 +290,7 @@ def generate_ind_tree(max_depth, method):
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
 
-    if params['BNF_GRAMMAR'].python_mode:
+    if parameter.params['BNF_GRAMMAR'].python_mode:
         # Grammar contains python code
 
         phenotype = python_filter(phenotype)
@@ -303,13 +303,13 @@ def generate_ind_tree(max_depth, method):
     ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
     # Generate random tail for genome.
-    ind.genome = genome + [randint(0, params['CODON_SIZE']) for
+    ind.genome = genome + [randint(0, parameter.params['CODON_SIZE']) for
                            _ in range(int(ind.used_codons / 2))]
 
     return ind
 
 
-def generate_PI_ind_tree(max_depth):
+def generate_PI_ind_tree(parameter, max_depth):
     """
     Generate an individual using a given Position Independent subtree
     initialisation method.
@@ -319,7 +319,7 @@ def generate_PI_ind_tree(max_depth):
     """
 
     # Initialise an instance of the tree class
-    ind_tree = Tree(str(params['BNF_GRAMMAR'].start_rule["symbol"]), None)
+    ind_tree = Tree(str(parameter.params['BNF_GRAMMAR'].start_rule["symbol"]), None)
 
     # Generate a tree
     genome, output, nodes, depth = pi_grow(ind_tree, max_depth)
@@ -327,7 +327,7 @@ def generate_PI_ind_tree(max_depth):
     # Get remaining individual information
     phenotype, invalid, used_cod = "".join(output), False, len(genome)
 
-    if params['BNF_GRAMMAR'].python_mode:
+    if parameter.params['BNF_GRAMMAR'].python_mode:
         # Grammar contains python code
 
         phenotype = python_filter(phenotype)
@@ -340,13 +340,13 @@ def generate_PI_ind_tree(max_depth):
     ind.depth, ind.used_codons, ind.invalid = depth, used_cod, invalid
 
     # Generate random tail for genome.
-    ind.genome = genome + [randint(0, params['CODON_SIZE']) for
+    ind.genome = genome + [randint(0, parameter.params['CODON_SIZE']) for
                            _ in range(int(ind.used_codons / 2))]
 
     return ind
 
 
-def load_population(target):
+def load_population(parameter, target):
     """
     Given a target folder, read all files in the folder and load/parse
     solutions found in each file.
@@ -439,12 +439,12 @@ def load_population(target):
                     "Error: Specified genotype from file " + file_name + \
                     " doesn't map to same phenotype. Check the specified " \
                     "grammar to ensure all is correct: " + \
-                    params['GRAMMAR_FILE']
+                    parameter.params['GRAMMAR_FILE']
                 raise Exception(s)
         
         else:
             # Set target for GE LR Parser.
-            params['REVERSE_MAPPING_TARGET'] = phenotype
+            parameter.params['REVERSE_MAPPING_TARGET'] = phenotype
             
             # Parse target phenotype.
             ind = GE_LR_parser.main()

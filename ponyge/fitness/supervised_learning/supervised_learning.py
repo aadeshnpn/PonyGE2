@@ -1,7 +1,7 @@
 import numpy as np
 np.seterr(all="raise")
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.utilities.fitness.get_data import get_data
 from ponyge.utilities.fitness.math_functions import *
 from ponyge.utilities.fitness.optimize_constants import optimize_constants
@@ -25,19 +25,21 @@ class supervised_learning(base_ff):
     should not be instantiated.
     """
 
-    def __init__(self):
+    def __init__(self, parameter):
         # Initialise base fitness function class.
         super().__init__()
 
+        self.parameter = parameter
+
         # Get training and test data
         self.training_in, self.training_exp, self.test_in, self.test_exp = \
-            get_data(params['DATASET_TRAIN'], params['DATASET_TEST'])
+            get_data(parameter, parameter.params['DATASET_TRAIN'], parameter.params['DATASET_TEST'])
 
         # Find number of variables.
         self.n_vars = np.shape(self.training_in)[0]
 
         # Regression/classification-style problems use training and test data.
-        if params['DATASET_TEST']:
+        if parameter.params['DATASET_TEST']:
             self.training_test = True
 
     def evaluate(self, ind, **kwargs):
@@ -67,7 +69,7 @@ class supervised_learning(base_ff):
         else:
             raise ValueError("Unknown dist: " + dist)
 
-        if params['OPTIMIZE_CONSTANTS']:
+        if self.parameter.params['OPTIMIZE_CONSTANTS']:
             # if we are training, then optimize the constants by
             # gradient descent and save the resulting phenotype
             # string as ind.phenotype_with_c0123 (eg x[0] +
@@ -75,7 +77,7 @@ class supervised_learning(base_ff):
             # ind.opt_consts (eg (0.5, 0.7). Later, when testing,
             # use the saved string and constants to evaluate.
             if dist == "training":
-                return optimize_constants(x, y, ind)
+                return optimize_constants(self.parameter, x, y, ind)
 
             else:
                 # this string has been created during training
@@ -87,7 +89,7 @@ class supervised_learning(base_ff):
 
                 # let's always call the error function with the
                 # true values first, the estimate second
-                return params['ERROR_METRIC'](y, yhat)
+                return self.parameter.params['ERROR_METRIC'](y, yhat)
 
         else:
             # phenotype won't refer to C
@@ -96,4 +98,4 @@ class supervised_learning(base_ff):
 
             # let's always call the error function with the true
             # values first, the estimate second
-            return params['ERROR_METRIC'](y, yhat)
+            return self.parameter.params['ERROR_METRIC'](y, yhat)

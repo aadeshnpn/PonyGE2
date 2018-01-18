@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 plt.rc('font', family='Times New Roman')
 
 
-def save_pareto_fitness_plot():
+def save_pareto_fitness_plot(parameter):
     """
     Saves a plot of the current fitness for a pareto front.
 
     :return: Nothing
     """
 
-    from ponyge.algorithm.parameters import params
+    # from ponyge.algorithm.parameters import params
 
     # Initialise up figure instance.
     fig = plt.figure()
@@ -27,7 +27,7 @@ def save_pareto_fitness_plot():
     color = iter(plt.cm.jet(np.linspace(0, 1, len(first_pareto_list))))
 
     # Get labels for individual fitnesses.
-    ffs = params['FITNESS_FUNCTION'].fitness_functions
+    ffs = parameter.params['FITNESS_FUNCTION'].fitness_functions
 
     # Find the direction for step lines to "bend"
     step_dir = 'pre' if ffs[0].maximise else 'post'
@@ -61,11 +61,11 @@ def save_pareto_fitness_plot():
     cbar.ax.set_ylabel('Generation', rotation=90)
 
     # Save plot and close.
-    plt.savefig(path.join(params['FILE_PATH'], "fitness.pdf"))
+    plt.savefig(path.join(parameter.params['FILE_PATH'], "fitness.pdf"))
     plt.close()
 
 
-def save_plot_from_data(data, name):
+def save_plot_from_data(parameter, data, name):
     """
     Saves a plot of a given set of data.
 
@@ -74,7 +74,7 @@ def save_plot_from_data(data, name):
     :return: Nothing.
     """
 
-    from ponyge.algorithm.parameters import params
+    # from ponyge.algorithm.parameters import params
 
     # Initialise up figure instance.
     fig = plt.figure()
@@ -91,7 +91,7 @@ def save_plot_from_data(data, name):
     plt.title(name)
 
     # Save plot and close.
-    plt.savefig(path.join(params['FILE_PATH'], (name + '.pdf')))
+    plt.savefig(path.join(parameter.params['FILE_PATH'], (name + '.pdf')))
     plt.close()
 
 
@@ -131,7 +131,7 @@ def save_plot_from_file(filename, stat_name):
     plt.close()
 
 
-def save_box_plot(data, names, title):
+def save_box_plot(parameter, data, names, title):
     """
     Given an array of some data, and a list of names of that data, generate
     and save a box plot of that data.
@@ -142,7 +142,7 @@ def save_box_plot(data, names, title):
     :return: Nothing
     """
 
-    from ponyge.algorithm.parameters import params
+    # from ponyge.algorithm.parameters import params
 
     import matplotlib.pyplot as plt
     plt.rc('font', family='Times New Roman')
@@ -167,7 +167,7 @@ def save_box_plot(data, names, title):
     plt.xticks(nums, names, rotation='vertical', fontsize=8)
 
     # Save plot.
-    plt.savefig(path.join(params['FILE_PATH'], (title + '.pdf')))
+    plt.savefig(path.join(parameter.params['FILE_PATH'], (title + '.pdf')))
 
     # Close plot.
     plt.close()

@@ -2,7 +2,7 @@ from math import floor
 from re import match, finditer, DOTALL, MULTILINE
 from sys import maxsize
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 
 
 class Grammar(object):
@@ -10,14 +10,14 @@ class Grammar(object):
     Parser for Backus-Naur Form (BNF) Context-Free Grammars.
     """
 
-    def __init__(self, file_name):
+    def __init__(self, parameter, file_name):
         """
         Initialises an instance of the grammar class. This instance is used
         to parse a given file_name grammar.
 
         :param file_name: A specified BNF grammar file.
         """
-
+        self.parameter = parameter
         if file_name.endswith("pybnf"):
             # Use python filter for parsing grammar output as grammar output
             # contains indented python code.
@@ -35,7 +35,7 @@ class Grammar(object):
 
         # Initialise dicts for terminals and non terminals, set params.
         self.non_terminals, self.terminals = {}, {}
-        self.start_rule, self.codon_size = None, params['CODON_SIZE']
+        self.start_rule, self.codon_size = None, parameter.params['CODON_SIZE']
         self.min_path, self.max_arity, self.min_ramp = None, None, None
 
         # Set regular expressions for parsing BNF grammar.
@@ -65,16 +65,16 @@ class Grammar(object):
         # combinations that can be created by a grammar at a range of depths.
         self.check_permutations()
 
-        if params['MIN_INIT_TREE_DEPTH']:
+        if parameter.params['MIN_INIT_TREE_DEPTH']:
             # Set the minimum ramping tree depth from the command line.
-            self.min_ramp = params['MIN_INIT_TREE_DEPTH']
+            self.min_ramp = parameter.params['MIN_INIT_TREE_DEPTH']
 
-        elif hasattr(params['INITIALISATION'], "ramping"):
+        elif hasattr(parameter.params['INITIALISATION'], "ramping"):
             # Set the minimum depth at which ramping can start where we can
             # have unique solutions (no duplicates).
             self.get_min_ramp_depth()
 
-        if params['REVERSE_MAPPING_TARGET'] or params['TARGET_SEED_FOLDER']:
+        if parameter.params['REVERSE_MAPPING_TARGET'] or parameter.params['TARGET_SEED_FOLDER']:
             # Initialise dicts for reverse-mapping GE individuals.
             self.concat_NTs, self.climb_NTs = {}, {}
 
@@ -137,7 +137,7 @@ class Grammar(object):
                         try:
                             if m.group('range') == "dataset_n_vars":
                                 # set n = number of columns from dataset
-                                n = params['FITNESS_FUNCTION'].n_vars
+                                n = self.parameter.params['FITNESS_FUNCTION'].n_vars
                             else:
                                 # assume it's just an int
                                 n = int(m.group('range'))
@@ -415,7 +415,7 @@ class Grammar(object):
 
         # Set the number of depths permutations are calculated for
         # (starting from the minimum path of the grammar)
-        ramps = params['PERMUTATION_RAMPS']
+        ramps = self.parameter.params['PERMUTATION_RAMPS']
 
         perms_list = []
         if self.max_arity > self.min_path:
@@ -547,8 +547,8 @@ class Grammar(object):
         :return: The minimum depth at which unique solutions can be generated
         """
 
-        max_tree_depth = params['MAX_INIT_TREE_DEPTH']
-        size = params['POPULATION_SIZE']
+        max_tree_depth = self.parameter.params['MAX_INIT_TREE_DEPTH']
+        size = self.parameter.params['POPULATION_SIZE']
 
         # Specify the range of ramping depths
         depths = range(self.min_path, max_tree_depth + 1)

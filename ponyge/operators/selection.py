@@ -1,11 +1,11 @@
 from random import sample
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.utilities.algorithm.NSGA2 import compute_pareto_metrics, \
     crowded_comparison_operator
 
 
-def selection(population):
+def selection(parameter, population):
     """
     Perform selection on a population in order to select a population of
     individuals for variation.
@@ -14,10 +14,10 @@ def selection(population):
     :return: selected population
     """
 
-    return params['SELECTION'](population)
+    return parameter.params['SELECTION'](population)
 
 
-def tournament(population):
+def tournament(parameter, population):
     """
     Given an entire population, draw <tournament_size> competitors randomly and
     return the best. Only valid individuals can be selected for tournaments.
@@ -30,15 +30,15 @@ def tournament(population):
     winners = []
 
     # The flag "INVALID_SELECTION" allows for selection of invalid individuals.
-    if params['INVALID_SELECTION']:
+    if parameter.params['INVALID_SELECTION']:
         available = population
     else:
         available = [i for i in population if not i.invalid]
 
-    while len(winners) < params['GENERATION_SIZE']:
+    while len(winners) < parameter.params['GENERATION_SIZE']:
         # Randomly choose TOURNAMENT_SIZE competitors from the given
         # population. Allows for re-sampling of individuals.
-        competitors = sample(available, params['TOURNAMENT_SIZE'])
+        competitors = sample(available, parameter.params['TOURNAMENT_SIZE'])
 
         # Return the single best competitor.
         winners.append(max(competitors))
@@ -47,7 +47,7 @@ def tournament(population):
     return winners
 
 
-def truncation(population):
+def truncation(parameter, population):
     """
     Given an entire population, return the best <proportion> of them.
 
@@ -59,13 +59,13 @@ def truncation(population):
     population.sort(reverse=True)
 
     # Find the cutoff point for truncation.
-    cutoff = int(len(population) * float(params['SELECTION_PROPORTION']))
+    cutoff = int(len(population) * float(parameter.params['SELECTION_PROPORTION']))
 
     # Return the best <proportion> of the given population.
     return population[:cutoff]
 
 
-def nsga2_selection(population):
+def nsga2_selection(parameter, population):
     """Apply NSGA-II selection operator on the *population*. Usually, the
     size of *population* will be larger than *k* because any individual
     present in *population* will appear in the returned list at most once.
@@ -81,14 +81,14 @@ def nsga2_selection(population):
        optimization: NSGA-II", 2002.
     """
 
-    selection_size = params['GENERATION_SIZE']
-    tournament_size = params['TOURNAMENT_SIZE']
+    selection_size = parameter.params['GENERATION_SIZE']
+    tournament_size = parameter.params['TOURNAMENT_SIZE']
 
     # Initialise list of tournament winners.
     winners = []
 
     # The flag "INVALID_SELECTION" allows for selection of invalid individuals.
-    if params['INVALID_SELECTION']:
+    if parameter.params['INVALID_SELECTION']:
         available = population
     else:
         available = [i for i in population if not i.invalid]

@@ -1,7 +1,7 @@
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.fitness.evaluation import evaluate_fitness
-from ponyge.stats.stats import stats, get_stats
-from ponyge.utilities.stats import trackers
+# from ponyge.stats.stats import stats, get_stats
+# from ponyge.utilities.stats import trackers
 
 
 """Hill-climbing is just about the simplest metaheuristic there
@@ -55,7 +55,7 @@ count only accepted, or only improving moves.
 """
 
 
-def LAHC_search_loop():
+def LAHC_search_loop(parameter):
     """
     Search loop for Late Acceptance Hill Climbing.
     
@@ -79,40 +79,40 @@ def LAHC_search_loop():
     :return: The final population.
     """
 
-    max_its = params['POPULATION_SIZE'] * params['GENERATIONS']
+    max_its = parameter.params['POPULATION_SIZE'] * parameter.params['GENERATIONS']
 
     # Initialise population
-    individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
+    individuals = parameter.params['INITIALISATION'](parameter.params['POPULATION_SIZE'])
 
     # Evaluate initial population
-    individuals = evaluate_fitness(individuals)
+    individuals = evaluate_fitness(individuals, parameter)
 
     # Generate statistics for run so far
-    get_stats(individuals)
+    parameter.stats.get_stats(individuals)
 
     # Find the best individual so far.
-    best = trackers.best_ever
+    best = parameter.trackers.best_ever
     
     # Set history.
-    Lfa = params['HILL_CLIMBING_HISTORY']
+    Lfa = parameter.params['HILL_CLIMBING_HISTORY']
     history = [best for _ in range(Lfa)]
 
     # iters is the number of individuals examined so far.
     iters = len(individuals)
     
-    for generation in range(1, (params['GENERATIONS']+1)):
+    for generation in range(1, (parameter.params['GENERATIONS']+1)):
 
         this_gen = []
 
         # even though there is no population, we will take account of
         # the pop size parameter: ie we'll save stats after every
         # "generation"
-        for j in range(params['POPULATION_SIZE']):
+        for j in range(parameter.params['POPULATION_SIZE']):
 
             this_gen.append(best)  # collect this "generation"
 
             # Mutate the best to get the candidate best
-            candidate_best = params['MUTATION'](best)
+            candidate_best = parameter.params['MUTATION'](best)
             if not candidate_best.invalid:
                 candidate_best.evaluate()
 
@@ -137,8 +137,8 @@ def LAHC_search_loop():
                 break
 
         # Get stats for this "generation".
-        stats['gen'] = generation
-        get_stats(this_gen)
+        parameter.stats.stats['gen'] = generation
+        parameter.stats.get_stats(this_gen)
 
         if iters >= max_its:
             # We have completed the total number of iterations.
@@ -147,7 +147,7 @@ def LAHC_search_loop():
     return individuals
 
 
-def SCHC_search_loop():
+def SCHC_search_loop(parameter):
     """
     Search Loop for Step-Counting Hill-Climbing.
     
@@ -196,42 +196,42 @@ def SCHC_search_loop():
     """
     
     # Calculate maximum number of evaluation iterations.
-    max_its = params['POPULATION_SIZE'] * params['GENERATIONS']
-    count_method = params['SCHC_COUNT_METHOD']
+    max_its = parameter.params['POPULATION_SIZE'] * parameter.params['GENERATIONS']
+    count_method = parameter.params['SCHC_COUNT_METHOD']
 
     # Initialise population
-    individuals = params['INITIALISATION'](params['POPULATION_SIZE'])
+    individuals = parameter.params['INITIALISATION'](parameter.params['POPULATION_SIZE'])
 
     # Evaluate initial population
-    individuals = evaluate_fitness(individuals)
+    individuals = evaluate_fitness(individuals, parameter)
 
     # Generate statistics for run so far
-    get_stats(individuals)
+    parameter.stats.get_stats(individuals)
 
     # Set best individual and initial cost bound.
-    best = trackers.best_ever
+    best = parameter.trackers.best_ever
     cost_bound = best.deep_copy()
 
     # Set history and counter.
-    history = params['HILL_CLIMBING_HISTORY']
+    history = parameter.params['HILL_CLIMBING_HISTORY']
     counter = 0
     
     # iters is the number of individuals examined/iterations so far.
     iters = len(individuals)
     
-    for generation in range(1, (params['GENERATIONS']+1)):
+    for generation in range(1, (parameter.params['GENERATIONS']+1)):
 
         this_gen = []
 
         # even though there is no population, we will take account of
         # the pop size parameter: ie we'll save stats after every
         # "generation"
-        for j in range(params['POPULATION_SIZE']):
+        for j in range(parameter.params['POPULATION_SIZE']):
 
             this_gen.append(best)  # collect this "generation"
 
             # Mutate best to get candidate best.
-            candidate_best = params['MUTATION'](best)
+            candidate_best = parameter.params['MUTATION'](best)
             if not candidate_best.invalid:
                 candidate_best.evaluate()
 
@@ -271,8 +271,8 @@ def SCHC_search_loop():
                 break
 
         # Get stats for this "generation".
-        stats['gen'] = generation
-        get_stats(this_gen)
+        parameter.stats.stats['gen'] = generation
+        parameter.get_stats(this_gen)
 
         if iters >= max_its:
             # We have completed the total number of iterations.

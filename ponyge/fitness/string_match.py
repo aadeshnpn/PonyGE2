@@ -1,4 +1,4 @@
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 
 
@@ -8,12 +8,12 @@ class string_match(base_ff):
     Penalty given to individual string components which do not match ASCII
     value of target."""
 
-    def __init__(self):
+    def __init__(self, parameter):
         # Initialise base fitness function class.
         super().__init__()
         
         # Set target string.
-        self.target = params['TARGET']
+        self.target = parameter.params['TARGET']
 
     def evaluate(self, ind, **kwargs):
         guess = ind.phenotype

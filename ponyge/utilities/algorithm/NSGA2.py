@@ -1,11 +1,11 @@
 from collections import defaultdict
 from numpy import isnan
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.utilities.fitness.math_functions import percentile
 
 
-def compute_pareto_metrics(population):
+def compute_pareto_metrics(population, parameter):
     """
     Compute the pareto fronts using NSGA-II.
 
@@ -14,15 +14,15 @@ def compute_pareto_metrics(population):
     """
 
     # Calculate the pareto fronts using Non-Dominated Sorting.
-    pareto = sort_non_dominated(population)
+    pareto = sort_non_dominated(population, parameter)
 
     # Calculate the crowding distance
-    pareto = calculate_crowding_distance(pareto)
+    pareto = calculate_crowding_distance(pareto, parameter)
 
     return pareto
 
 
-def sort_non_dominated(population):
+def sort_non_dominated(population, parameter):
     """Sort the first *k* *population* into different nondomination levels
     using the "Fast Nondominated Sorting Approach" proposed by Deb et al.,
     see [Deb2002]_. This algorithm has a time complexity of :math:`O(MN^2)`,
@@ -41,7 +41,7 @@ def sort_non_dominated(population):
     """
 
     # Initialise empty pareto class instance.
-    pareto = ParetoInfo()
+    pareto = ParetoInfo(parameter)
 
     # Compute the Inter-Quartile Range (+1) value used to normalize the
     # crowding distance
@@ -53,11 +53,11 @@ def sort_non_dominated(population):
         # Compute the domination counter of p
         for q in population:
 
-            if dominates(p, q):
+            if dominates(p, q, parameter):
                 # Add *q* to the set of solutions dominated by *p*
                 pareto.dominated_solutions[p].append(q)
 
-            elif dominates(q, p):
+            elif dominates(q, p, parameter):
                 # Increment the domination counter of p
                 pareto.update_domination_count(p, True)
 
@@ -98,7 +98,7 @@ def sort_non_dominated(population):
     return pareto
 
 
-def dominates(individual1, individual2):
+def dominates(individual1, individual2, parameter):
     """
     Returns whether or not *indvidual1* dominates *indvidual2*. An individual
     dominates another if all fitness values are at least as good on all
@@ -119,7 +119,7 @@ def dominates(individual1, individual2):
         return True
 
     # Get fitness functions.
-    ffs = params['FITNESS_FUNCTION'].fitness_functions
+    ffs = parameter.params['FITNESS_FUNCTION'].fitness_functions
 
     # Check how many fitness values are equal.
     equal_fit = [False] * len(ffs)
@@ -167,7 +167,7 @@ def compare_fitnesses(ind1_value, ind2_value, ff):
         return ind1_value < ind2_value
 
 
-def calculate_crowding_distance(pareto):
+def calculate_crowding_distance(pareto, parameter):
     """
     Compute the crowding distance of each individual in each Pareto front.
     The value is stored inside the dictionary *crowding_distance* kept by
@@ -194,9 +194,9 @@ def calculate_crowding_distance(pareto):
 
             for m in range(pareto.n_objectives):
                 # Sort the solutions using each objective value
-                front = sorted(front, key=lambda item: params[
+                front = sorted(front, key=lambda item: parameter.params[
                     'FITNESS_FUNCTION'].value(item.fitness, m),
-                               reverse=params['FITNESS_FUNCTION'].
+                               reverse=parameter.params['FITNESS_FUNCTION'].
                                fitness_functions[m].maximise)
 
                 # The boundary solutions are assigned an infinite distance
@@ -212,9 +212,9 @@ def calculate_crowding_distance(pareto):
                     # solutions. The normalization uses (IQR + 1) instead of
                     # (max-min)
                     pareto.crowding_distance[front[index]] += \
-                        (params['FITNESS_FUNCTION'].value(
+                        (parameter.params['FITNESS_FUNCTION'].value(
                             front[index + 1].fitness, m) -
-                         params['FITNESS_FUNCTION'].value(
+                         parameter.params['FITNESS_FUNCTION'].value(
                              front[index - 1].fitness, m)) / \
                         pareto.fitness_iqr[m]
 
@@ -248,7 +248,7 @@ def crowded_comparison_operator(self, other, pareto):
         return False
 
 
-def get_population_iqr(population, n_objectives):
+def get_population_iqr(population, n_objectives, parameter):
     """
     Compute the inter-quartile range (IQR) of the population regarding
     each objective.
@@ -266,29 +266,30 @@ def get_population_iqr(population, n_objectives):
 
         # Sort the population with respect to the current objective.
         sorted_pop = sorted(population, key=lambda ind:
-                            params['FITNESS_FUNCTION'].value(ind.fitness, m),
-                            reverse=params['FITNESS_FUNCTION'].
+                            parameter.params['FITNESS_FUNCTION'].value(ind.fitness, m),
+                            reverse=parameter.params['FITNESS_FUNCTION'].
                             fitness_functions[m].maximise)
 
         # Get the inter-quartile fitness ranges for the current objective.
-        iqr[m] = (params['FITNESS_FUNCTION'].value(percentile(sorted_pop,
+        iqr[m] = (parameter.params['FITNESS_FUNCTION'].value(percentile(sorted_pop,
                                                               75).fitness, m) -
-                  params['FITNESS_FUNCTION'].value(percentile(sorted_pop,
+                  parameter.params['FITNESS_FUNCTION'].value(percentile(sorted_pop,
                                                               25).fitness, m))
     return iqr
 
 
 class ParetoInfo:
 
-    def __init__(self):
+    def __init__(self, parameter):
         self.fronts = [[]]
         self.rank = dict()
         self.domination_count = dict()
         self.crowding_distance = dict()
         self.dominated_solutions = defaultdict(list)
+        self.parameter = parameter
 
         try:
-            self.n_objectives = params['FITNESS_FUNCTION'].num_obj
+            self.n_objectives = self.parameter.params['FITNESS_FUNCTION'].num_obj
 
         except AttributeError:
             s = "utilities.algorithm.NSGA2\n" \
@@ -311,7 +312,7 @@ class ParetoInfo:
         """
 
         # Get the inter-quartile ranges for all objectives.
-        self.fitness_iqr = get_population_iqr(population, self.n_objectives)
+        self.fitness_iqr = get_population_iqr(population, self.n_objectives, self.parameter)
 
         # If the IQR value is zero, we replace it for 1---which is equivalent
         # to disregard the normalization process for that objective dimension.

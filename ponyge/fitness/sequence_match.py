@@ -1,4 +1,4 @@
-from ponyge.algorithm.parameters import params
+#from ponyge.algorithm.parameters import params
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 
 import editdistance  # https://pypi.python.org/pypi/editdistance
@@ -149,7 +149,7 @@ def proglen(s):
 
 class sequence_match(base_ff):
         
-    def __init__(self):
+    def __init__(self, parameter):
         """
         Initilise class instance
         """
@@ -157,12 +157,12 @@ class sequence_match(base_ff):
         super().__init__()
         
         # --target will be a sequence such as (0, 5, 0, 5)
-        self.target = eval(params['TARGET'])
+        self.target = eval(parameter.params['TARGET'])
         
         # we assume --extra_parameters is a comma-separated kv sequence, eg:
         # "alpha=0.5, beta=0.5, gamma=0.5"
         # which we can pass to the dict() constructor
-        extra_fit_params = eval("dict("+params['EXTRA_PARAMETERS']+")")
+        extra_fit_params = eval("dict("+parameter.params['EXTRA_PARAMETERS']+")")
         self.alpha = extra_fit_params['alpha']
         self.beta = extra_fit_params['beta']
         self.gamma = extra_fit_params['gamma']

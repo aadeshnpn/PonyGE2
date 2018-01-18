@@ -14,7 +14,7 @@ from multiprocessing import Pool
 from subprocess import call
 import sys
 
-from ponyge.algorithm.parameters import params, set_params
+# from ponyge.algorithm.parameters import params, set_params
 from ponyge.scripts.stats_parser import parse_stats_from_runs
 
 from joblib import Parallel, delayed

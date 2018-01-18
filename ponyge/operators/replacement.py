@@ -1,12 +1,12 @@
 from ponyge.fitness.evaluation import evaluate_fitness
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.operators.mutation import mutation
 from ponyge.operators.crossover import crossover_inds
 from ponyge.operators.selection import selection
 from ponyge.utilities.algorithm.NSGA2 import compute_pareto_metrics
 
 
-def replacement(new_pop, old_pop):
+def replacement(parameter, new_pop, old_pop):
     """
     Given a new population and an old population, performs replacement using
     specified replacement operator.
@@ -16,10 +16,10 @@ def replacement(new_pop, old_pop):
     :param old_pop: The previous generation population.
     :return: Replaced population.
     """
-    return params['REPLACEMENT'](new_pop, old_pop)
+    return parameter.params['REPLACEMENT'](new_pop, old_pop)
 
 
-def generational(new_pop, old_pop):
+def generational(parameter, new_pop, old_pop):
     """
     Replaces the old population with the new population. The ELITE_SIZE best
     individuals from the previous population are appended to new pop regardless
@@ -38,15 +38,15 @@ def generational(new_pop, old_pop):
     
     # Append the best ELITE_SIZE individuals from the old population to the
     # new population.
-    for ind in old_pop[:params['ELITE_SIZE']]:
+    for ind in old_pop[:parameter.params['ELITE_SIZE']]:
         new_pop.insert(0, ind)
     
     # Return the top POPULATION_SIZE individuals of the new pop, including
     # elites.
-    return new_pop[:params['POPULATION_SIZE']]
+    return new_pop[:parameter.params['POPULATION_SIZE']]
 
 
-def steady_state(individuals):
+def steady_state(parameter, individuals):
     """
     Runs a single generation of the evolutionary algorithm process,
     using steady state replacement:
@@ -71,13 +71,13 @@ def steady_state(individuals):
     # Initialise counter for new individuals.
     ind_counter = 0
 
-    while ind_counter < params['POPULATION_SIZE']:
+    while ind_counter < parameter.params['POPULATION_SIZE']:
         
         # Select parents from the original population.
         parents = selection(individuals)
 
         # Perform crossover on selected parents.
-        cross_pop = crossover_inds(parents[0], parents[1])
+        cross_pop = crossover_inds(parameter, parents[0], parents[1])
         
         if cross_pop is None:
             # Crossover failed.
@@ -85,10 +85,10 @@ def steady_state(individuals):
 
         else:
             # Mutate the new population.
-            new_pop = mutation(cross_pop)
+            new_pop = mutation(parameter, cross_pop)
         
             # Evaluate the fitness of the new population.
-            new_pop = evaluate_fitness(new_pop)
+            new_pop = evaluate_fitness(parameter, new_pop)
     
             # Sort the original population
             individuals.sort(reverse=True)
@@ -97,13 +97,13 @@ def steady_state(individuals):
             total_pop = individuals[:-len(new_pop)] + new_pop
         
             # Increment the ind counter
-            ind_counter += params['GENERATION_SIZE']
+            ind_counter += parameter.params['GENERATION_SIZE']
 
     # Return the combined population.
     return total_pop
 
 
-def nsga2_replacement(new_pop, old_pop):
+def nsga2_replacement(parameter, new_pop, old_pop):
     """
     Replaces the old population with the new population using NSGA-II
     replacement. Both new and old populations are combined, pareto fronts
@@ -123,7 +123,7 @@ def nsga2_replacement(new_pop, old_pop):
     pareto = compute_pareto_metrics(new_pop)
 
     # Size of the new population
-    pop_size = params['POPULATION_SIZE']
+    pop_size = parameter.params['POPULATION_SIZE']
 
     # New population to replace the last one
     temp_pop, i = [], 0

@@ -1,3 +1,6 @@
+from ponyge.utilities.stats.trackers import Trackers
+from ponyge.stats.stats import Stats
+
 from multiprocessing import cpu_count
 from os import path
 from socket import gethostname
@@ -6,369 +9,372 @@ hostname = gethostname().split('.')
 machine_name = hostname[0]
 
 
-"""Algorithm parameters"""
-params = {
-        # Set default step and search loop functions
-        'SEARCH_LOOP': 'search_loop',
-        'STEP': 'step',
+class Parameters:
+    """Algorithm parameters."""
 
-        # Evolutionary Parameters
-        'POPULATION_SIZE': 500,
-        'GENERATIONS': 50,
-        'HILL_CLIMBING_HISTORY': 1000,
-        'SCHC_COUNT_METHOD': "count_all",
+    def __init__(self):
+        self.params = {
+                # Set default step and search loop functions
+                'SEARCH_LOOP': 'search_loop',
+                'STEP': 'step',
 
-        # Set optional experiment name
-        'EXPERIMENT_NAME': None,
-        # Set default number of runs to be done.
-        # ONLY USED WITH EXPERIMENT MANAGER.
-        'RUNS': 1,
+                # Evolutionary Parameters
+                'POPULATION_SIZE': 500,
+                'GENERATIONS': 50,
+                'HILL_CLIMBING_HISTORY': 1000,
+                'SCHC_COUNT_METHOD': "count_all",
 
-        # Class of problem
-        'FITNESS_FUNCTION': "supervised_learning.regression",
+                # Set optional experiment name
+                'EXPERIMENT_NAME': None,
+                # Set default number of runs to be done.
+                # ONLY USED WITH EXPERIMENT MANAGER.
+                'RUNS': 1,
 
-        # Select problem dataset
-        'DATASET_TRAIN': "Vladislavleva4/Train.txt",
-        'DATASET_TEST': None,
-        'DATASET_DELIMITER': None,
+                # Class of problem
+                'FITNESS_FUNCTION': "supervised_learning.regression",
 
-        # Set grammar file
-        'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
+                # Select problem dataset
+                'DATASET_TRAIN': "Vladislavleva4/Train.txt",
+                'DATASET_TEST': None,
+                'DATASET_DELIMITER': None,
 
-        # Set the number of depths permutations are calculated for
-        # (starting from the minimum path of the grammar).
-        # Mainly for use with the grammar analyser script.
-        'PERMUTATION_RAMPS': 5,
+                # Set grammar file
+                'GRAMMAR_FILE': "supervised_learning/Vladislavleva4.bnf",
 
-        # Select error metric
-        'ERROR_METRIC': None,
+                # Set the number of depths permutations are calculated for
+                # (starting from the minimum path of the grammar).
+                # Mainly for use with the grammar analyser script.
+                'PERMUTATION_RAMPS': 5,
 
-        # Optimise constants in the supervised_learning fitness function.
-        'OPTIMIZE_CONSTANTS': False,
+                # Select error metric
+                'ERROR_METRIC': None,
 
-        # Specify target for target problems
-        'TARGET': "ponyge_rocks",
+                # Optimise constants in the supervised_learning fitness function.
+                'OPTIMIZE_CONSTANTS': False,
 
-        # Set max sizes of individuals
-        'MAX_TREE_DEPTH': 90,  # SET TO 90 DUE TO PYTHON EVAL() STACK LIMIT.
-                               # INCREASE AT YOUR OWN RISK.
-        'MAX_TREE_NODES': None,
-        'CODON_SIZE': 100000,
-        'MAX_GENOME_LENGTH': None,
-        'MAX_WRAPS': 0,
+                # Specify target for target problems
+                'TARGET': "ponyge_rocks",
 
-        # INITIALISATION
-        # Set initialisation operator.
-        'INITIALISATION': "operators.initialisation.PI_grow",
-        # Set the maximum geneome length for initialisation.
-        'INIT_GENOME_LENGTH': 200,
-        # Set the maximum tree depth for initialisation.
-        'MAX_INIT_TREE_DEPTH': 10,
-        # Set the minimum tree depth for initialisation.
-        'MIN_INIT_TREE_DEPTH': None,
+                # Set max sizes of individuals
+                'MAX_TREE_DEPTH': 90,  # SET TO 90 DUE TO PYTHON EVAL() STACK LIMIT.
+                                    # INCREASE AT YOUR OWN RISK.
+                'MAX_TREE_NODES': None,
+                'CODON_SIZE': 100000,
+                'MAX_GENOME_LENGTH': None,
+                'MAX_WRAPS': 0,
 
-        # SELECTION
-        # Set selection operator.
-        'SELECTION': "operators.selection.tournament",
-        # For tournament selection
-        'TOURNAMENT_SIZE': 2,
-        # For truncation selection
-        'SELECTION_PROPORTION': 0.5,
-        # Allow for selection of invalid individuals during selection process.
-        'INVALID_SELECTION': False,
+                # INITIALISATION
+                # Set initialisation operator.
+                'INITIALISATION': "operators.initialisation.PI_grow",
+                # Set the maximum geneome length for initialisation.
+                'INIT_GENOME_LENGTH': 200,
+                # Set the maximum tree depth for initialisation.
+                'MAX_INIT_TREE_DEPTH': 10,
+                # Set the minimum tree depth for initialisation.
+                'MIN_INIT_TREE_DEPTH': None,
 
-        # OPERATOR OPTIONS
-        # Boolean flag for selecting whether or not mutation is confined to
-        # within the used portion of the genome. Default set to True.
-        'WITHIN_USED': True,
+                # SELECTION
+                # Set selection operator.
+                'SELECTION': "operators.selection.tournament",
+                # For tournament selection
+                'TOURNAMENT_SIZE': 2,
+                # For truncation selection
+                'SELECTION_PROPORTION': 0.5,
+                # Allow for selection of invalid individuals during selection process.
+                'INVALID_SELECTION': False,
 
-        # CROSSOVER
-        # Set crossover operator.
-        'CROSSOVER': "operators.crossover.variable_onepoint",
-        # Set crossover probability.
-        'CROSSOVER_PROBABILITY': 0.75,
-        # Prevents crossover from generating invalids.
-        'NO_CROSSOVER_INVALIDS': False,
+                # OPERATOR OPTIONS
+                # Boolean flag for selecting whether or not mutation is confined to
+                # within the used portion of the genome. Default set to True.
+                'WITHIN_USED': True,
 
-        # MUTATION
-        # Set mutation operator.
-        'MUTATION': "operators.mutation.int_flip_per_codon",
-        # Set mutation probability (None defaults to 1 over the length of
-        # the genome for each codon)
-        'MUTATION_PROBABILITY': None,
-        # Set number of mutation events
-        'MUTATION_EVENTS': 1,
-        # Prevents mutation from generating invalids.
-        'NO_MUTATION_INVALIDS': False,
+                # CROSSOVER
+                # Set crossover operator.
+                'CROSSOVER': "operators.crossover.variable_onepoint",
+                # Set crossover probability.
+                'CROSSOVER_PROBABILITY': 0.75,
+                # Prevents crossover from generating invalids.
+                'NO_CROSSOVER_INVALIDS': False,
 
-        # REPLACEMENT
-        # Set replacement operator.
-        'REPLACEMENT': "operators.replacement.generational",
-        # Set elite size.
-        'ELITE_SIZE': None,
+                # MUTATION
+                # Set mutation operator.
+                'MUTATION': "operators.mutation.int_flip_per_codon",
+                # Set mutation probability (None defaults to 1 over the length of
+                # the genome for each codon)
+                'MUTATION_PROBABILITY': None,
+                # Set number of mutation events
+                'MUTATION_EVENTS': 1,
+                # Prevents mutation from generating invalids.
+                'NO_MUTATION_INVALIDS': False,
 
-        # DEBUGGING
-        # Use this to turn on debugging mode. This mode doesn't write any files
-        # and should be used when you want to test new methods.
-        'DEBUG': False,
+                # REPLACEMENT
+                # Set replacement operator.
+                'REPLACEMENT': "operators.replacement.generational",
+                # Set elite size.
+                'ELITE_SIZE': None,
 
-        # PRINTING
-        # Use this to print out basic statistics for each generation to the
-        # command line.
-        'VERBOSE': False,
-        # Use this to prevent anything being printed to the command line.
-        'SILENT': False,
+                # DEBUGGING
+                # Use this to turn on debugging mode. This mode doesn't write any files
+                # and should be used when you want to test new methods.
+                'DEBUG': False,
 
-        # SAVING
-        # Save the phenotype of the best individual from each generation. Can
-        # generate a lot of files. DEBUG must be False.
-        'SAVE_ALL': False,
-        # Save a plot of the evolution of the best fitness result for each
-        # generation.
-        'SAVE_PLOTS': True,
+                # PRINTING
+                # Use this to print out basic statistics for each generation to the
+                # command line.
+                'VERBOSE': False,
+                # Use this to prevent anything being printed to the command line.
+                'SILENT': False,
 
-        # MULTIPROCESSING
-        # Multi-core parallel processing of phenotype evaluations.
-        'MULTICORE': False,
-        # Set the number of cpus to be used for multiprocessing
-        'CORES': cpu_count(),
+                # SAVING
+                # Save the phenotype of the best individual from each generation. Can
+                # generate a lot of files. DEBUG must be False.
+                'SAVE_ALL': False,
+                # Save a plot of the evolution of the best fitness result for each
+                # generation.
+                'SAVE_PLOTS': True,
 
-        # STATE SAVING/LOADING
-        # Save the state of the evolutionary run every generation. You can
-        # specify how often you want to save the state with SAVE_STATE_STEP.
-        'SAVE_STATE': False,
-        # Specify how often the state of the current evolutionary run is
-        # saved (i.e. every n-th generation). Requires int value.
-        'SAVE_STATE_STEP': 1,
-        # Load an evolutionary run from a saved state. You must specify the
-        # full file path to the desired state file. Note that state files have
-        # no file type.
-        'LOAD_STATE': None,
+                # MULTIPROCESSING
+                # Multi-core parallel processing of phenotype evaluations.
+                'MULTICORE': False,
+                # Set the number of cpus to be used for multiprocessing
+                'CORES': cpu_count(),
 
-        # SEEDING
-        # Specify a list of PonyGE2 individuals with which to seed the initial
-        # population.
-        'SEED_INDIVIDUALS': [],
-        # Specify a target seed folder in the 'seeds' directory that contains a
-        # population of individuals with which to seed a run.
-        'TARGET_SEED_FOLDER': None,
-        # Set a target phenotype string for reverse mapping into a GE
-        # individual
-        'REVERSE_MAPPING_TARGET': None,
-        # Set Random Seed for all Random Number Generators to be used by
-        # PonyGE2, including the standard Python RNG and the NumPy RNG.
-        'RANDOM_SEED': None,
+                # STATE SAVING/LOADING
+                # Save the state of the evolutionary run every generation. You can
+                # specify how often you want to save the state with SAVE_STATE_STEP.
+                'SAVE_STATE': False,
+                # Specify how often the state of the current evolutionary run is
+                # saved (i.e. every n-th generation). Requires int value.
+                'SAVE_STATE_STEP': 1,
+                # Load an evolutionary run from a saved state. You must specify the
+                # full file path to the desired state file. Note that state files have
+                # no file type.
+                'LOAD_STATE': None,
 
-        # CACHING
-        # The cache tracks unique individuals across evolution by saving a
-        # string of each phenotype in a big list of all phenotypes. Saves all
-        # fitness information on each individual. Gives you an idea of how much
-        # repetition is in standard GE/GP.
-        'CACHE': False,
-        # Uses the cache to look up the fitness of duplicate individuals. CACHE
-        # must be set to True if you want to use this.
-        'LOOKUP_FITNESS': False,
-        # Uses the cache to give a bad fitness to duplicate individuals. CACHE
-        # must be True if you want to use this (obviously)
-        'LOOKUP_BAD_FITNESS': False,
-        # Removes duplicate individuals from the population by replacing them
-        # with mutated versions of the original individual. Hopefully this will
-        # encourage diversity in the population.
-        'MUTATE_DUPLICATES': False,
+                # SEEDING
+                # Specify a list of PonyGE2 individuals with which to seed the initial
+                # population.
+                'SEED_INDIVIDUALS': [],
+                # Specify a target seed folder in the 'seeds' directory that contains a
+                # population of individuals with which to seed a run.
+                'TARGET_SEED_FOLDER': None,
+                # Set a target phenotype string for reverse mapping into a GE
+                # individual
+                'REVERSE_MAPPING_TARGET': None,
+                # Set Random Seed for all Random Number Generators to be used by
+                # PonyGE2, including the standard Python RNG and the NumPy RNG.
+                'RANDOM_SEED': None,
 
-        # MULTIAGENT Parameters
-        # True or False for Multiagent
-        'MULTIAGENT': False,
-        # Agent Size. Number of agents having their own copy of genetic material
-        'AGENT_SIZE': 100,
-        # Interaction Probablity. How frequently the agents can interaction with each other
-        'INTERACTION_PROBABILITY': 0.5,
-        
-        # OTHER
-        # Set machine name (useful for doing multiple runs)
-        'MACHINE': machine_name
-}
+                # CACHING
+                # The cache tracks unique individuals across evolution by saving a
+                # string of each phenotype in a big list of all phenotypes. Saves all
+                # fitness information on each individual. Gives you an idea of how much
+                # repetition is in standard GE/GP.
+                'CACHE': False,
+                # Uses the cache to look up the fitness of duplicate individuals. CACHE
+                # must be set to True if you want to use this.
+                'LOOKUP_FITNESS': False,
+                # Uses the cache to give a bad fitness to duplicate individuals. CACHE
+                # must be True if you want to use this (obviously)
+                'LOOKUP_BAD_FITNESS': False,
+                # Removes duplicate individuals from the population by replacing them
+                # with mutated versions of the original individual. Hopefully this will
+                # encourage diversity in the population.
+                'MUTATE_DUPLICATES': False,
 
+                # MULTIAGENT Parameters
+                # True or False for Multiagent
+                'MULTIAGENT': False,
+                # Agent Size. Number of agents having their own copy of genetic material
+                'AGENT_SIZE': 100,
+                # Interaction Probablity. How frequently the agents can interaction with each other
+                'INTERACTION_PROBABILITY': 0.5,
+                
+                # OTHER
+                # Set machine name (useful for doing multiple runs)
+                'MACHINE': machine_name
+        }
 
-def load_params(file_name):
-    """
-    Load in a params text file and set the params dictionary directly.
+        self.trackers = Trackers()
+        self.stats = Stats(self)
 
-    :param file_name: The name/location of a parameters file.
-    :return: Nothing.
-    """
+    def load_params(self, file_name):
+        """
+        Load in a params text file and set the params dictionary directly.
 
-    try:
-        open(file_name, "r")
-    except FileNotFoundError:
-        s = "algorithm.paremeters.load_params\n" \
-            "Error: Parameters file not found.\n" \
-            "       Ensure file extension is specified, e.g. 'regression.txt'."
-        raise Exception(s)
+        :param file_name: The name/location of a parameters file.
+        :return: Nothing.
+        """
+        try:
+            open(file_name, "r")
+        except FileNotFoundError:
+            s = "algorithm.paremeters.load_params\n" \
+                "Error: Parameters file not found.\n" \
+                "       Ensure file extension is specified, e.g. 'regression.txt'."
+            raise Exception(s)
 
-    with open(file_name, 'r') as parameters:
-        # Read the whole parameters file.
-        content = parameters.readlines()
+        with open(file_name, 'r') as parameters:
+            # Read the whole parameters file.
+            content = parameters.readlines()
 
-        for line in [l for l in content if not l.startswith("#")]:
+            for line in [l for l in content if not l.startswith("#")]:
 
-            # Parameters files are parsed by finding the first instance of a
-            # colon.
-            split = line.find(":")
+                # Parameters files are parsed by finding the first instance of a
+                # colon.
+                split = line.find(":")
 
-            # Everything to the left of the colon is the parameter key,
-            # everything to the right is the parameter value.
-            key, value = line[:split], line[split+1:].strip()
+                # Everything to the left of the colon is the parameter key,
+                # everything to the right is the parameter value.
+                key, value = line[:split], line[split+1:].strip()
 
-            # Evaluate parameters.
-            try:
-                value = eval(value)
+                # Evaluate parameters.
+                try:
+                    value = eval(value)
 
-            except:
-                # We can't evaluate, leave value as a string.
-                pass
+                except:
+                    # We can't evaluate, leave value as a string.
+                    pass
 
-            # Set parameter
-            params[key] = value
-        
+                # Set parameter
+                self.params[key] = value
+            
+    def set_params(self, command_line_args, create_files=True):
+        """
+        This function parses all command line arguments specified by the user.
+        If certain parameters are not set then defaults are used (e.g. random
+        seeds, elite size). Sets the correct imports given command line
+        arguments. Sets correct grammar file and fitness function. Also
+        initialises save folders and tracker lists in utilities.trackers.
 
-def set_params(command_line_args, create_files=True):
-    """
-    This function parses all command line arguments specified by the user.
-    If certain parameters are not set then defaults are used (e.g. random
-    seeds, elite size). Sets the correct imports given command line
-    arguments. Sets correct grammar file and fitness function. Also
-    initialises save folders and tracker lists in utilities.trackers.
+        :param command_line_args: Command line arguments specified by the user.
+        :return: Nothing.
+        """
 
-    :param command_line_args: Command line arguments specified by the user.
-    :return: Nothing.
-    """
+        from ponyge.utilities.algorithm.initialise_run import initialise_run_params
+        from ponyge.utilities.algorithm.initialise_run import set_param_imports
+        from ponyge.utilities.fitness.math_functions import return_one_percent
+        from ponyge.utilities.algorithm.command_line_parser import parse_cmd_args
+        from ponyge.utilities.stats import clean_stats
+        from ponyge.representation import grammar
 
-    from ponyge.utilities.algorithm.initialise_run import initialise_run_params
-    from ponyge.utilities.algorithm.initialise_run import set_param_imports
-    from ponyge.utilities.fitness.math_functions import return_one_percent
-    from ponyge.utilities.algorithm.command_line_parser import parse_cmd_args
-    from ponyge.utilities.stats import trackers, clean_stats
-    from ponyge.representation import grammar
+        cmd_args, unknown = parse_cmd_args(command_line_args)
 
-    cmd_args, unknown = parse_cmd_args(command_line_args)
+        if unknown:
+            # We currently do not parse unknown parameters. Raise error.
+            s = "algorithm.parameters.set_params\nError: " \
+                "unknown parameters: %s\nYou may wish to check the spelling, " \
+                "add code to recognise this parameter, or use " \
+                "--extra_parameters" % str(unknown)
+            raise Exception(s)
 
-    if unknown:
-        # We currently do not parse unknown parameters. Raise error.
-        s = "algorithm.parameters.set_params\nError: " \
-            "unknown parameters: %s\nYou may wish to check the spelling, " \
-            "add code to recognise this parameter, or use " \
-            "--extra_parameters" % str(unknown)
-        raise Exception(s)
+        # LOAD PARAMETERS FILE
+        # NOTE that the parameters file overwrites all previously set parameters.
+        if 'PARAMETERS' in cmd_args:
+            self.load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
 
-    # LOAD PARAMETERS FILE
-    # NOTE that the parameters file overwrites all previously set parameters.
-    if 'PARAMETERS' in cmd_args:
-        load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
+        # Join original params dictionary with command line specified arguments.
+        # NOTE that command line arguments overwrite all previously set parameters.
+        self.params.update(cmd_args)
 
-    # Join original params dictionary with command line specified arguments.
-    # NOTE that command line arguments overwrite all previously set parameters.
-    params.update(cmd_args)
+        if self.params['LOAD_STATE']:
+            # Load run from state.
+            from ponyge.utilities.algorithm.state import load_state
 
-    if params['LOAD_STATE']:
-        # Load run from state.
-        from ponyge.utilities.algorithm.state import load_state
+            # Load in state information.
+            individuals = load_state(self, self.params['LOAD_STATE'])
 
-        # Load in state information.
-        individuals = load_state(params['LOAD_STATE'])
+            # Set correct search loop.
+            from ponyge.algorithm.search_loop import search_loop_from_state
+            self.params['SEARCH_LOOP'] = search_loop_from_state
 
-        # Set correct search loop.
-        from ponyge.algorithm.search_loop import search_loop_from_state
-        params['SEARCH_LOOP'] = search_loop_from_state
-
-        # Set population.
-        setattr(trackers, "state_individuals", individuals)
-
-    else:
-        if params['REPLACEMENT'].split(".")[-1] == "steady_state":
-            # Set steady state step and replacement.
-            params['STEP'] = "steady_state_step"
-            params['GENERATION_SIZE'] = 2
+            # Set population.
+            setattr(self.trackers, "state_individuals", individuals)
 
         else:
-            # Elite size is set to either 1 or 1% of the population size,
-            # whichever is bigger if no elite size is previously set.
-            if params['ELITE_SIZE'] is None:
-                params['ELITE_SIZE'] = return_one_percent(1, params[
-                    'POPULATION_SIZE'])
+            if self.params['REPLACEMENT'].split(".")[-1] == "steady_state":
+                # Set steady state step and replacement.
+                self.params['STEP'] = "steady_state_step"
+                self.params['GENERATION_SIZE'] = 2
 
-            # Set the size of a generation
-            params['GENERATION_SIZE'] = params['POPULATION_SIZE'] - \
-                                        params['ELITE_SIZE']
+            else:
+                # Elite size is set to either 1 or 1% of the population size,
+                # whichever is bigger if no elite size is previously set.
+                if self.params['ELITE_SIZE'] is None:
+                    self.params['ELITE_SIZE'] = return_one_percent(1, self.params[
+                        'POPULATION_SIZE'])
 
-        # Initialise run lists and folders before we set imports.r
-        initialise_run_params(create_files)
+                # Set the size of a generation
+                self.params['GENERATION_SIZE'] = self.params['POPULATION_SIZE'] - \
+                                            self.params['ELITE_SIZE']
 
-        # Set correct param imports for specified function options, including
-        # error metrics and fitness functions.
-        set_param_imports()
+            # Initialise run lists and folders before we set imports.r
+            initialise_run_params(self, create_files)
 
-        # Clean the stats dict to remove unused stats.
-        clean_stats.clean_stats()
+            # Set correct param imports for specified function options, including
+            # error metrics and fitness functions.
+            set_param_imports(self)
 
-        # Crossover variables
-        from ponyge.operators.crossover import ( 
-            variable_onepoint, variable_twopoint,
-            fixed_onepoint, fixed_twopoint
-        )
-        variable_onepoint.representation = "linear"    
-        variable_twopoint.representation = "linear"    
-        fixed_onepoint.representation = "linear"                    
-        fixed_twopoint.representation = "linear"
+            # Clean the stats dict to remove unused stats.
+            clean_stats.clean_stats(self)
 
-        # Set GENOME_OPERATIONS automatically for faster linear operations.
-        if params['CROSSOVER'].representation == "linear" and \
-                params['MUTATION'].representation == "linear":
-            params['GENOME_OPERATIONS'] = True
-        else:
-            params['GENOME_OPERATIONS'] = False
+            # Crossover variables
+            from ponyge.operators.crossover import ( 
+                variable_onepoint, variable_twopoint,
+                fixed_onepoint, fixed_twopoint
+            )
+            variable_onepoint.representation = "linear"    
+            variable_twopoint.representation = "linear"    
+            fixed_onepoint.representation = "linear"                    
+            fixed_twopoint.representation = "linear"
 
-        # Ensure correct operators are used if multiple fitness functions used.
-        if hasattr(params['FITNESS_FUNCTION'], 'multi_objective'):
+            # Set GENOME_OPERATIONS automatically for faster linear operations.
+            if self.params['CROSSOVER'].representation == "linear" and \
+                    self.params['MUTATION'].representation == "linear":
+                self.params['GENOME_OPERATIONS'] = True
+            else:
+                self.params['GENOME_OPERATIONS'] = False
 
-            # Check that multi-objective compatible selection is specified.
-            if not hasattr(params['SELECTION'], "multi_objective"):
-                s = "algorithm.parameters.set_params\n" \
-                    "Error: multi-objective compatible selection " \
-                    "operator not specified for use with multiple " \
-                    "fitness functions."
-                raise Exception(s)
+            # Ensure correct operators are used if multiple fitness functions used.
+            if hasattr(self.params['FITNESS_FUNCTION'], 'multi_objective'):
 
-            if not hasattr(params['REPLACEMENT'], "multi_objective"):
-
-                # Check that multi-objective compatible replacement is
-                # specified.
-                if not hasattr(params['REPLACEMENT'], "multi_objective"):
+                # Check that multi-objective compatible selection is specified.
+                if not hasattr(self.params['SELECTION'], "multi_objective"):
                     s = "algorithm.parameters.set_params\n" \
-                        "Error: multi-objective compatible replacement " \
+                        "Error: multi-objective compatible selection " \
                         "operator not specified for use with multiple " \
                         "fitness functions."
                     raise Exception(s)
 
-        # Parse grammar file and set grammar class.
-        params['BNF_GRAMMAR'] = grammar.Grammar(path.join("..", "grammars",
-                                                params['GRAMMAR_FILE']))
+                if not hasattr(self.params['REPLACEMENT'], "multi_objective"):
 
-        # Population loading for seeding runs (if specified)
-        if params['TARGET_SEED_FOLDER']:
+                    # Check that multi-objective compatible replacement is
+                    # specified.
+                    if not hasattr(self.params['REPLACEMENT'], "multi_objective"):
+                        s = "algorithm.parameters.set_params\n" \
+                            "Error: multi-objective compastatstible replacement " \
+                            "operator not specified for use with multiple " \
+                            "fitness functions."
+                        raise Exception(s)
 
-            # Import population loading function.
-            from ponyge.operators.initialisation import load_population
+            # Parse grammar file and set grammar class.
+            self.params['BNF_GRAMMAR'] = grammar.Grammar(self, path.join("..", "grammars",
+                                                    self.params['GRAMMAR_FILE']))
 
-            # A target folder containing seed individuals has been given.
-            params['SEED_INDIVIDUALS'] = load_population(
-                params['TARGET_SEED_FOLDER'])
+            # Population loading for seeding runs (if specified)
+            if self.params['TARGET_SEED_FOLDER']:
 
-        elif params['REVERSE_MAPPING_TARGET']:
-            # A single seed phenotype has been given. Parse and run.
+                # Import population loading function.
+                from ponyge.operators.initialisation import load_population
 
-            # Import GE LR Parser.
-            from ponyge.scripts import GE_LR_parser
+                # A target folder containing seed individuals has been given.
+                self.params['SEED_INDIVIDUALS'] = load_population(self, 
+                    self.params['TARGET_SEED_FOLDER'])
 
-            # Parse seed individual and store in params.
-            params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]
+            elif self.params['REVERSE_MAPPING_TARGET']:
+                # A single seed phenotype has been given. Parse and run.
+
+                # Import GE LR Parser.
+                from ponyge.scripts import GE_LR_parser
+
+                # Parse seed individual and store in params.
+                self.params['SEED_INDIVIDUALS'] = [GE_LR_parser.main()]

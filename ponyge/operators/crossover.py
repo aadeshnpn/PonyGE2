@@ -1,11 +1,11 @@
 from random import randint, random, sample, choice
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.representation import individual
 from ponyge.utilities.representation.check_methods import check_ind
 
 
-def crossover(parents):
+def crossover(parameter, parents):
     """
     Perform crossover on a population of individuals.
 
@@ -21,13 +21,13 @@ def crossover(parents):
     # Initialise an empty population.
     cross_pop = []
 
-    while len(cross_pop) < params['GENERATION_SIZE']:
+    while len(cross_pop) < parameter.params['GENERATION_SIZE']:
         
         # Randomly choose two parents from the parent population.
         inds_in = sample(parents, 2)
 
         # Perform crossover on chosen parents.
-        inds_out = crossover_inds(inds_in[0], inds_in[1])
+        inds_out = crossover_inds(parameter, inds_in[0], inds_in[1])
         
         if inds_out is None:
             # Crossover failed.
@@ -41,7 +41,7 @@ def crossover(parents):
     return cross_pop
 
 
-def crossover_inds(parent_0, parent_1):
+def crossover_inds(parameter, parent_0, parent_1):
     """
     Perform crossover on two selected individuals.
 
@@ -56,16 +56,16 @@ def crossover_inds(parent_0, parent_1):
     ind_1 = parent_1.deep_copy()
 
     # Crossover cannot be performed on invalid individuals.
-    if not params['INVALID_SELECTION'] and (ind_0.invalid or ind_1.invalid):
+    if not parameter.params['INVALID_SELECTION'] and (ind_0.invalid or ind_1.invalid):
         s = "operators.crossover.crossover\nError: invalid individuals " \
             "selected for crossover."
         raise Exception(s)
 
     # Perform crossover on ind_0 and ind_1.
-    inds = params['CROSSOVER'](ind_0, ind_1)
+    inds = parameter.params['CROSSOVER'](ind_0, ind_1)
 
     # Check each individual is ok (i.e. does not violate specified limits).
-    checks = [check_ind(ind, "crossover") for ind in inds]
+    checks = [check_ind(parameter, ind, "crossover") for ind in inds]
 
     if any(checks):
         # An individual violates a limit.
@@ -76,7 +76,7 @@ def crossover_inds(parent_0, parent_1):
         return inds
 
 
-def variable_onepoint(p_0, p_1):
+def variable_onepoint(parameter, p_0, p_1):
     """
     Given two individuals, create two children using one-point crossover.
 
@@ -97,13 +97,13 @@ def variable_onepoint(p_0, p_1):
     genome_0, genome_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points.
-    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
+    max_p_0, max_p_1 = get_max_genome_index(parameter, p_0, p_1)
         
     # Select unique points on each genome for crossover to occur.
     pt_0, pt_1 = randint(1, max_p_0), randint(1, max_p_1)
 
     # Make new chromosomes by crossover: these slices perform copies.
-    if random() < params['CROSSOVER_PROBABILITY']:
+    if random() < parameter.params['CROSSOVER_PROBABILITY']:
         c_0 = genome_0[:pt_0] + genome_1[pt_1:]
         c_1 = genome_1[:pt_1] + genome_0[pt_0:]
     else:
@@ -116,7 +116,7 @@ def variable_onepoint(p_0, p_1):
     return [ind_0, ind_1]
 
 
-def fixed_onepoint(p_0, p_1):
+def fixed_onepoint(parameter, p_0, p_1):
     """
     Given two individuals, create two children using one-point crossover and
     return them. The same point is selected on both genomes for crossover
@@ -133,13 +133,13 @@ def fixed_onepoint(p_0, p_1):
     genome_0, genome_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points.
-    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
+    max_p_0, max_p_1 = get_max_genome_index(parameter, p_0, p_1)
     
     # Select the same point on both genomes for crossover to occur.
     pt = randint(1, min(max_p_0, max_p_1))
     
     # Make new chromosomes by crossover: these slices perform copies.
-    if random() < params['CROSSOVER_PROBABILITY']:
+    if random() < parameter.params['CROSSOVER_PROBABILITY']:
         c_0 = genome_0[:pt] + genome_1[pt:]
         c_1 = genome_1[:pt] + genome_0[pt:]
     else:
@@ -152,7 +152,7 @@ def fixed_onepoint(p_0, p_1):
     return [ind_0, ind_1]
 
 
-def fixed_twopoint(p_0, p_1):
+def fixed_twopoint(parameter, p_0, p_1):
     """
     Given two individuals, create two children using two-point crossover and
     return them. The same points are selected on both genomes for crossover
@@ -168,14 +168,14 @@ def fixed_twopoint(p_0, p_1):
     genome_0, genome_1 = p_0.genome, p_1.genome
 
     # Uniformly generate crossover points.
-    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
+    max_p_0, max_p_1 = get_max_genome_index(parameter, p_0, p_1)
 
     # Select the same points on both genomes for crossover to occur.
     a, b = randint(1, max_p_0), randint(1, max_p_1)
     pt_0, pt_1 = min([a, b]), max([a, b])
     
     # Make new chromosomes by crossover: these slices perform copies.
-    if random() < params['CROSSOVER_PROBABILITY']:
+    if random() < parameter.params['CROSSOVER_PROBABILITY']:
         c_0 = genome_0[:pt_0] + genome_1[pt_0:pt_1] + genome_0[pt_1:]
         c_1 = genome_1[:pt_0] + genome_0[pt_0:pt_1] + genome_1[pt_1:]
     else:
@@ -188,7 +188,7 @@ def fixed_twopoint(p_0, p_1):
     return [ind_0, ind_1]
 
 
-def variable_twopoint(p_0, p_1):
+def variable_twopoint(parameter, p_0, p_1):
     """
     Given two individuals, create two children using two-point crossover and
     return them. Different points are selected on both genomes for crossover
@@ -204,7 +204,7 @@ def variable_twopoint(p_0, p_1):
     genome_0, genome_1 = p_0.genome, p_1.genome
     
     # Uniformly generate crossover points.
-    max_p_0, max_p_1 = get_max_genome_index(p_0, p_1)
+    max_p_0, max_p_1 = get_max_genome_index(parameter, p_0, p_1)
     
     # Select the same points on both genomes for crossover to occur.
     a_0, b_0 = randint(1, max_p_0), randint(1, max_p_1)
@@ -213,7 +213,7 @@ def variable_twopoint(p_0, p_1):
     pt_2, pt_3 = min([a_1, b_1]), max([a_1, b_1])
     
     # Make new chromosomes by crossover: these slices perform copies.
-    if random() < params['CROSSOVER_PROBABILITY']:
+    if random() < parameter.params['CROSSOVER_PROBABILITY']:
         c_0 = genome_0[:pt_0] + genome_1[pt_2:pt_3] + genome_0[pt_1:]
         c_1 = genome_1[:pt_2] + genome_0[pt_0:pt_1] + genome_1[pt_3:]
     else:
@@ -229,7 +229,7 @@ def variable_twopoint(p_0, p_1):
     # Set attributes for all operators to define linear or subtree representations.
 
 
-def subtree(p_0, p_1):
+def subtree(parameter, p_0, p_1):
     """
     Given two individuals, create two children using subtree crossover and
     return them. Candidate subtrees are selected based on matching
@@ -324,7 +324,7 @@ def subtree(p_0, p_1):
         
         return tree0, tree1
 
-    def intersect(l0, l1):
+    def intersect(parameter, l0, l1):
         """
         Returns the intersection of two sets of labels of nodes of
         derivation trees. Only returns matching non-terminal nodes across
@@ -341,12 +341,12 @@ def subtree(p_0, p_1):
         
         # Find only the non-terminals present in the intersecting set of
         # labels.
-        shared_nodes = [i for i in shared_nodes if i in params[
+        shared_nodes = [i for i in shared_nodes if i in parameter.params[
             'BNF_GRAMMAR'].non_terminals]
         
         return sorted(shared_nodes)
 
-    if random() > params['CROSSOVER_PROBABILITY']:
+    if random() > parameter.params['CROSSOVER_PROBABILITY']:
         # Crossover is not to be performed, return entire individuals.
         ind0 = p_1
         ind1 = p_0
@@ -375,7 +375,7 @@ def subtree(p_0, p_1):
         labels2 = p_1.tree.get_node_labels(set())
 
         # Find overlapping non-terminals across both trees.
-        shared_nodes = intersect(labels1, labels2)
+        shared_nodes = intersect(parameter, labels1, labels2)
 
         if len(shared_nodes) != 0:
             # There are overlapping NTs, cross over parts of trees.
@@ -397,7 +397,7 @@ def subtree(p_0, p_1):
     return [ind0, ind1]
 
 
-def get_max_genome_index(ind_0, ind_1):
+def get_max_genome_index(parameter, ind_0, ind_1):
     """
     Given two individuals, return the maximum index on each genome across
     which operations are to be performed. This can be either the used
@@ -409,7 +409,7 @@ def get_max_genome_index(ind_0, ind_1):
             performed.
     """
 
-    if params['WITHIN_USED']:
+    if parameter.params['WITHIN_USED']:
         # Get used codons range.
         
         if ind_0.invalid:

@@ -2,10 +2,10 @@ from os import path
 
 import numpy as np
 
-from ponyge.algorithm.parameters import params
+#from ponyge.algorithm.parameters import params
 
 
-def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
+def get_Xy_train_test_separate(parameter, train_filename, test_filename, skip_header=0):
     """
     Read in training and testing data files, and split each into X
     (all columns up to last) and y (last column).
@@ -17,9 +17,9 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     output (y) data.
     """
 
-    if params['DATASET_DELIMITER']:
+    if parameter.params['DATASET_DELIMITER']:
         # Dataset delimiter has been explicitly specified.
-        delimiter = params['DATASET_DELIMITER']
+        delimiter = parameter.params['DATASET_DELIMITER']
     
     else:
         # Try to auto-detect the field separator (i.e. delimiter).
@@ -81,7 +81,7 @@ def get_Xy_train_test_separate(train_filename, test_filename, skip_header=0):
     return train_X, train_y, test_X, test_y
 
 
-def get_data(train, test):
+def get_data(parameter, train, test):
     """
     Return the training and test data for the current experiment.
     
@@ -103,6 +103,6 @@ def get_data(train, test):
     
     # Read in the training and testing datasets from the specified files.
     training_in, training_out, test_in, \
-    test_out = get_Xy_train_test_separate(train_set, test_set, skip_header=1)
+    test_out = get_Xy_train_test_separate(parameter, train_set, test_set, skip_header=1)
     
     return training_in, training_out, test_in, test_out
