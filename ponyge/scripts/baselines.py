@@ -20,7 +20,7 @@ def pprint(a, format_string='{0:.2f}'):
     :return: A formatted array.
     """
     
-    return "[" + ", ".join(format_string.format(v,i) for i,v in enumerate(a)) + "]"
+    return "[" + ", ".join(format_string.format(v, i) for i,v in enumerate(a)) + "]"
 
 
 def fit_maj_class(train_X, train_y, test_X):

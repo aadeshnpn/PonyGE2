@@ -1,22 +1,18 @@
-from sys import path
-path.append("../src")
-
-from ponyge.utilities.algorithm.general import check_python_version
-
-check_python_version()
-
-import sys
-
-from ponyge.algorithm.parameters import params, set_params
+# from ponyge.algorithm.parameters import params, set_params
 from ponyge.operators.subtree_parse import get_NT_from_str, get_num_from_str, \
     generate_key_and_check, check_snippets_for_solution
 from ponyge.representation.tree import Tree
 from ponyge.utilities.representation.check_methods import generate_codon, \
     check_ind_from_parser
-from ponyge.utilities.stats import trackers
+from ponyge.utilities.algorithm.general import check_python_version
+import sys
+from sys import path
+path.append("../src")
+
+check_python_version()
 
 
-def parse_terminals(target):
+def parse_terminals(parameter, target):
     """
     Given a target string, build up a list of terminals which match certain
     portions of the target string.
@@ -24,21 +20,21 @@ def parse_terminals(target):
     :return: A list of terminals in order of appearance in the target string.
     """
 
-    if params['VERBOSE']:
+    if parameter.params['VERBOSE']:
         print("Target:\n", target)
 
     # Pre-load all terminals and non-terminal rules from the grammar.
-    terms, rules = params['BNF_GRAMMAR'].terminals, params['BNF_GRAMMAR'].rules
+    terms, rules = parameter.params['BNF_GRAMMAR'].terminals, parameter.params['BNF_GRAMMAR'].rules
 
     # Initialise dict for storing the snippets for compiling a complete
     # solution. The key for each entry is the portion of the target string on
     # which the output matches, along with the root node of the subtree. The
     # value is the subtree itself.
-    trackers.snippets = {}
+    parameter.trackers.snippets = {}
 
     # Initialise dict for deleted snippets, to ensure they aren't generated
     # again.
-    trackers.deleted_snippets = []
+    parameter.trackers.deleted_snippets = []
 
     for T in sorted(terms.keys()):
         # Iterate over all Terminals.
@@ -76,25 +72,25 @@ def parse_terminals(target):
                     choice = rules[NT]['choices'][index]['choice']
 
                     # Generate a tree for this choice.
-                    parent = Tree(NT, None)
+                    parent = Tree(parameter, NT, None)
 
                     # Generate a codon for this choice.
-                    parent.codon = generate_codon(NT, choice)
+                    parent.codon = generate_codon(parameter, NT, choice)
 
                     # Set the snippet key for the parent.
                     parent.snippet = key
 
                     # Create child for terminal.
-                    child = Tree(T, parent)
+                    child = Tree(parameter, T, parent)
 
                     # Add child to parent.
                     parent.children.append(child)
 
                     # Add snippet to snippets repository.
-                    trackers.snippets[key] = parent
+                    parameter.trackers.snippets[key] = parent
 
 
-def reduce(solution):
+def reduce(parameter, solution):
     """
     Takes a list of all matching subtrees found in the target string and
     iteratively combines and reduces subtrees to generate larger matching
@@ -108,10 +104,10 @@ def reduce(solution):
 
     # Find all non-terminals in the grammar that can be used to concatenate
     # subtrees to new/larger subtrees.
-    reduce_NTs = params['BNF_GRAMMAR'].concat_NTs
+    reduce_NTs = parameter.params['BNF_GRAMMAR'].concat_NTs
 
     # Pre-load the target string.
-    target = params['REVERSE_MAPPING_TARGET']
+    target = parameter.params['REVERSE_MAPPING_TARGET']
 
     for idx, snippet_info in enumerate(solution):
         # Get current snippet.
@@ -140,10 +136,10 @@ def reduce(solution):
                     # snippet already exists.
 
                     # Child is current snippet.
-                    child = [[snippet, trackers.snippets[snippet]]]
+                    child = [[snippet, parameter.trackers.snippets[snippet]]]
 
                     # Get key for new snippet.
-                    key, start, end = generate_key_and_check(start, end,
+                    key, start, end = generate_key_and_check(parameter, start, end,
                                                              reduce, child)
 
                     # Create a new node for the solution list.
@@ -174,7 +170,7 @@ def reduce(solution):
                             # something before it.
                             break
 
-                        elif end == len(params['TARGET']) and loc != \
+                        elif end == len(parameter.params['TARGET']) and loc != \
                                 NT_locs[-1]:
                             # The current snippet is at the end of the target
                             # string, but we are trying to reduce_trees it with
@@ -197,7 +193,7 @@ def reduce(solution):
                         children = [[] for _ in range(len(NTs))]
 
                         # Set original snippet into children.
-                        children[loc] = [snippet, trackers.snippets[snippet]]
+                        children[loc] = [snippet, parameter.trackers.snippets[snippet]]
 
                         curr_idx = solution.index(snippet_info)
 
@@ -217,7 +213,7 @@ def reduce(solution):
                                     key = str([pre - len(NTs[item][0]), pre])
 
                                     # Create new tree from this terminal.
-                                    T_tree = Tree(check, None)
+                                    T_tree = Tree(parameter, check, None)
 
                                     # Add to children.
                                     children[item] = [key, T_tree]
@@ -242,7 +238,7 @@ def reduce(solution):
                                     # Set the correct child in our
                                     # children.
                                     children[item] = [check[2],
-                                                      trackers.snippets[
+                                                      parameter.trackers.snippets[
                                                           check[2]]]
 
                                     # Decrement target string index.
@@ -267,7 +263,7 @@ def reduce(solution):
                                     key = str([aft, aft + len(NTs[item][0])])
 
                                     # Create new tree from this terminal.
-                                    T_tree = Tree(check, None)
+                                    T_tree = Tree(parameter, check, None)
 
                                     # Add to children.
                                     children[item] = [key, T_tree]
@@ -288,7 +284,7 @@ def reduce(solution):
                             # We have expanded all children and can collapse
                             # a node.
 
-                            key, pre, aft = generate_key_and_check(pre, aft,
+                            key, pre, aft = generate_key_and_check(parameter, pre, aft,
                                                                    reduce,
                                                                    children)
 
@@ -300,7 +296,7 @@ def reduce(solution):
                                 solution.insert(idx + 1, new_entry)
 
 
-def parse_target_string():
+def parse_target_string(parameter):
     """
     Takes a list of terminal nodes and iteratively reduces that list until
     the solution has been found.
@@ -311,13 +307,13 @@ def parse_target_string():
     # Sort snippets keys to generate the initial solution list of terminals.
     solution = sorted([[get_num_from_str(snippet),
                         get_NT_from_str(snippet),
-                        snippet] for snippet in trackers.snippets.keys()])
+                        snippet] for snippet in parameter.trackers.snippets.keys()])
 
     # Perform reduction on the solution list.
-    reduce(solution)
+    reduce(parameter, solution)
 
     # Check snippets for solution
-    ind = check_snippets_for_solution()
+    ind = check_snippets_for_solution(parameter)
 
     return ind
 

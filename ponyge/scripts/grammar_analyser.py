@@ -1,17 +1,14 @@
-from sys import path
-path.append("../src")
-
-from ponyge.utilities.algorithm.general import check_python_version
-
-check_python_version()
-
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 import ponyge.utilities.algorithm.command_line_parser as parser
 from ponyge.representation.grammar import Grammar
 from ponyge.utilities.fitness.math_functions import sci_notation
+from ponyge.utilities.algorithm.general import check_python_version
 
 import sys
 import os
+from sys import path
+path.append("../src")
+check_python_version()
 
 
 def main(command_line_args):
