@@ -74,7 +74,7 @@ def save_plot_from_data(data, name):
     :return: Nothing.
     """
 
-    from algorithm.parameters import params
+    from ponyge.algorithm.parameters import params
 
     # Initialise up figure instance.
     fig = plt.figure()
@@ -142,7 +142,7 @@ def save_box_plot(data, names, title):
     :return: Nothing
     """
 
-    from algorithm.parameters import params
+    from ponyge.algorithm.parameters import params
 
     import matplotlib.pyplot as plt
     plt.rc('font', family='Times New Roman')

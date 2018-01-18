@@ -257,7 +257,7 @@ def return_attr_from_module(module_name, attr_name):
 
     try:
         # Import module.
-        module = importlib.import_module(module_name)
+        module = importlib.import_module('ponyge.'+module_name)
 
     except ModuleNotFoundError:
         s = "utilities.algorithm.initialise_run.return_attr_from_module\n" \

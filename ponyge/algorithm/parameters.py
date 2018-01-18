@@ -306,7 +306,7 @@ def set_params(command_line_args, create_files=True):
 
         # Set correct param imports for specified function options, including
         # error metrics and fitness functions.
-        set_param_imports()
+        #set_param_imports()
 
         # Clean the stats dict to remove unused stats.
         clean_stats.clean_stats()
