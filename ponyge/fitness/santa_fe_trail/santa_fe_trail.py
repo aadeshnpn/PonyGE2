@@ -14,10 +14,7 @@ Ant simulator to simulate ants in Santa Fe trail environment
 """
     
 class santa_fe_trail(base_ff):
-    #Fitness function for matching a string. Takes a string and returns
-    #fitness. Penalises output that is not the same length as the target.
-    #Penalty given to individual string components which do not match ASCII
-    #value of target.
+    #Fitness function for Santa Fe Trail using Novelty Search
 
     def __init__(self):
         # Initialise base fitness function class.
@@ -25,6 +22,7 @@ class santa_fe_trail(base_ff):
         
         # Set target string.
         self.target = params['TARGET']
+        self.maximise = True
 
     def evaluate(self, ind, **kwargs):
         ant = AntSimulator(600)
@@ -32,7 +30,9 @@ class santa_fe_trail(base_ff):
         routine = ant.build_routine(code)
         ant.run(routine)
         #print (code,'Food eaten',ant.eaten)
-        return 90.0/(ant.eaten+1)
+        #return 90.0/(ant.eaten+1)
+
+        return ant.eaten
 
 ##Parsing type
 

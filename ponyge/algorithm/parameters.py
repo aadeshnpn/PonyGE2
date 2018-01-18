@@ -182,7 +182,7 @@ params = {
         # Agent Size. Number of agents having their own copy of genetic material
         'AGENT_SIZE': 100,
         # Interaction Probablity. How frequently the agents can interaction with each other
-        'INTERACTION_PROBABILITY':0.5,
+        'INTERACTION_PROBABILITY': 0.5,
         
         # OTHER
         # Set machine name (useful for doing multiple runs)
@@ -210,7 +210,7 @@ def load_params(file_name):
         # Read the whole parameters file.
         content = parameters.readlines()
 
-        for line in content:
+        for line in [l for l in content if not l.startswith("#")]:
 
             # Parameters files are parsed by finding the first instance of a
             # colon.
@@ -269,7 +269,7 @@ def set_params(command_line_args, create_files=True):
     # Join original params dictionary with command line specified arguments.
     # NOTE that command line arguments overwrite all previously set parameters.
     params.update(cmd_args)
-    
+
     if params['LOAD_STATE']:
         # Load run from state.
         from utilities.algorithm.state import load_state

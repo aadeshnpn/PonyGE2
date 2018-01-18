@@ -1,0 +1,62 @@
+#!/bin/bash
+
+source ~/anaconda2/bin/activate hub;
+
+current_loc=/home/aadeshnpn/Documents/BYU/hcmi/swarm_simulator/ponydge
+
+#s_parameter_file_name=('string_match' 'regression' 'santa_fe_trail' 'swarm')
+#m_parameter_file_name=('string_match_distributed' 'regression_distributed' 'santa_fe_trail_distributed' 'swarm_distributed')
+
+#s_parameter_file_name=('string_match' 'regression' 'santa_fe_trail')
+#m_parameter_file_name=('string_match_distributed' 'regression_distributed')
+
+s_parameter_file_name=('santa_fe_trail')
+m_parameter_file_name=('santa_fe_trail_distributed')
+
+standard()
+{
+    filename="${current_loc}/parameters/${1}.txt"
+    sed -i -e "s/^\(POPULATION_SIZE:\).*/\1\t${2}/g" "$filename"
+    sed -i -e "s/^\(GENERATIONS:\).*/\1\t${3}/g" "$filename"
+}
+
+multi_agent()
+{
+    filename="${current_loc}/parameters/${1}.txt"
+    sed -i -e "s/^\(AGENT_SIZE:\).*/\1\t\t${2}/g" "$filename"
+    sed -i -e "s/^\(GENERATIONS:\).*/\1\t${3}/g" "$filename"    
+}
+
+#population_size=(100 200 300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500)
+population_size=(900 1000 1100 1200 1300 1400 1500)
+#population_size=(50 100)
+generations=(50)
+#generations=(5 10)
+run_val=50
+
+main()
+{
+    for size in ${population_size[@]}
+    do
+        for gen in ${generations[@]}
+        do
+            i=0
+            while [[ $i -lt ${#m_parameter_file_name[@]} ]]
+            do
+                standard "${s_parameter_file_name[i]}" "${size}" "${gen}"
+                multi_agent "${m_parameter_file_name[i]}" "${size}" "${gen}"
+
+                exp_name="${s_parameter_file_name[i]}_${gen}_${size}"
+                echo "Running ${exp_name}"
+                PYTHONHASHSEED=0; python ${current_loc}/src/scripts/experiment_manager.py --parameter ${s_parameter_file_name[$i]}.txt --run ${run_val} --experiment ${exp_name} --silent
+                exp_name="${m_parameter_file_name[i]}_${gen}_${size}"
+                echo "Running ${exp_name}"
+                PYTHONHASHSEED=0; python ${current_loc}/src/scripts/experiment_manager.py --parameter ${m_parameter_file_name[$i]}.txt --run ${run_val} --experiment ${exp_name} --silent
+                ((i=i+1))
+            done
+        done
+    done    
+}
+
+main
+

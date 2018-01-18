@@ -14,8 +14,15 @@ from multiprocessing import Pool
 from subprocess import call
 import sys
 
+<<<<<<< HEAD:ponyge/scripts/experiment_manager.py
 from ponyge.algorithm.parameters import params, set_params
 from ponyge.scripts.stats_parser import parse_stats_from_runs
+=======
+from joblib import Parallel, delayed
+
+from algorithm.parameters import params, set_params
+from scripts.stats_parser import parse_stats_from_runs
+>>>>>>> 2960c345499826fd657fe117b403937f249ae8cf:src/scripts/experiment_manager.py
 
 
 def execute_run(seed):
@@ -25,7 +32,7 @@ def execute_run(seed):
     :return: Nothing.
     """
 
-    exec_str = "python3 ponyge.py " \
+    exec_str = "python ponyge.py " \
                "--random_seed " + str(seed) + " " + " ".join(sys.argv[1:])
 
     call(exec_str, shell=True)
@@ -39,20 +46,26 @@ def execute_runs():
     """
 
     # Initialise empty list of results.
-    results = []
+    #results = []
+
+
 
     # Initialise pool of workers.
-    pool = Pool(processes=params['CORES'])
+    #pool = Pool(processes=params['CORES'])
 
-    for run in range(params['RUNS']):
+    Parallel(n_jobs=params['CORES'])(delayed(execute_run)(run) for run in range(params['RUNS']))
+    #for run in range(params['RUNS']):
+    #    execute_run(run)
+
+    #for run in range(params['RUNS']):
         # Execute a single evolutionary run.
-        results.append(pool.apply_async(execute_run, (run,)))
+    #    results.append(pool.apply_async(execute_run, (run,)))
 
-    for result in results:
-        result.get()
+    #for result in results:
+    #    result.get()
 
     # Close pool once runs are finished.
-    pool.close()
+    #pool.close()
 
 
 def check_params():

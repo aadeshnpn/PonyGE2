@@ -5,9 +5,3 @@
 <prog2>::=prog2(<progs>,<progs>)
 <prog3>::=prog3(<progs>,<progs>,<progs>)
 <op>::=left|right|move
-#<condition>::=food_ahead():{:<code>:}else:{:<code>:}
-#<condition>::=if_food_ahead(<code>,<code>)
-#<condition> ::= "if(food_ahead()==1) {"<code>"} else {" <code> "}"
-#<op> ::=  left(); | right(); | move();
-#<code> ::= <line> | <code> <line>
-#<line> ::= <condition> | <op>

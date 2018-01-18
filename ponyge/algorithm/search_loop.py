@@ -15,6 +15,8 @@ def search_loop():
     the specified number of generations.
     """
 
+    #print ('stats generation one value',stats['gen'])
+    #exit()
     if params['MULTICORE']:
         # initialize pool once, if mutlicore is enabled
         params['POOL'] = Pool(processes=params['CORES'], initializer=pool_init,
@@ -29,6 +31,10 @@ def search_loop():
     # Generate statistics for run so far
     get_stats(individuals)
 
+    #print (stats)
+    #exit()
+    #print ('stats generation one value',stats['gen'])
+    #exit()
     # Traditional GE
     for generation in range(1, (params['GENERATIONS']+1)):
         stats['gen'] = generation

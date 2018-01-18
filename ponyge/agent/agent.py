@@ -1,3 +1,4 @@
+<<<<<<< HEAD:ponyge/agent/agent.py
 from ponyge.operators.initialisation import initialisation
 from ponyge.fitness.evaluation import evaluate_fitness
 from ponyge.stats.stats import stats, get_stats
@@ -5,6 +6,16 @@ from ponyge.operators.crossover import crossover
 from ponyge.operators.mutation import mutation
 from ponyge.operators.replacement import replacement, steady_state
 from ponyge.operators.selection import selection
+=======
+from operators.initialisation import initialisation
+from fitness.evaluation import evaluate_fitness
+from stats.stats import stats, get_stats
+from operators.crossover import crossover
+from operators.mutation import mutation
+from operators.replacement import replacement, steady_state
+from operators.selection import selection
+from algorithm.parameters import params
+>>>>>>> 2960c345499826fd657fe117b403937f249ae8cf:src/agent/agent.py
 
 class Agent():
     """
@@ -77,10 +88,10 @@ class Agent():
             # Replace the old population with the new population.
             individuals = replacement(new_pop, individuals)
 
-            # Generate statistics for run so far
-            get_stats(individuals)
-            
-            # Sort the individuals list 
+            # Sort the individuals list based on the fitness objective
+            #if params['FITNESS_FUNCTION'].maximise:
+            #    individuals.sort(reverse=False)
+            #else:
             individuals.sort(reverse=True)
 
             # Get the higest performing individual from the sorted population 
