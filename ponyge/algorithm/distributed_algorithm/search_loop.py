@@ -1,11 +1,7 @@
 from ponyge.agent.agent import Agent
 from ponyge.algorithm.parameters import params
 #from fitness.evaluation import evaluate_fitness
-<<<<<<< HEAD:ponyge/algorithm/distributed_algorithm/search_loop.py
 from ponyge.stats.stats import stats
-=======
-from stats.stats import stats, get_stats
->>>>>>> 2960c345499826fd657fe117b403937f249ae8cf:src/algorithm/distributed_algorithm/search_loop.py
 #from utilities.stats import trackers
 #from operators.initialisation import initialisation
 #from utilities.algorithm.initialise_run import pool_init

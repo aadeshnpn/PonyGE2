@@ -14,16 +14,10 @@ from multiprocessing import Pool
 from subprocess import call
 import sys
 
-<<<<<<< HEAD:ponyge/scripts/experiment_manager.py
 from ponyge.algorithm.parameters import params, set_params
 from ponyge.scripts.stats_parser import parse_stats_from_runs
-=======
+
 from joblib import Parallel, delayed
-
-from algorithm.parameters import params, set_params
-from scripts.stats_parser import parse_stats_from_runs
->>>>>>> 2960c345499826fd657fe117b403937f249ae8cf:src/scripts/experiment_manager.py
-
 
 def execute_run(seed):
     """
