@@ -3,7 +3,7 @@ import pandas as pd
 from os import path, pathsep
 import numpy as np
 
-from ponyge.utilities.stats.trackers import first_pareto_list
+# from ponyge.utilities.stats.trackers import first_pareto_list
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -24,7 +24,7 @@ def save_pareto_fitness_plot(parameter):
     ax1 = fig.add_subplot(1, 1, 1)
 
     # Set up iterator for color plotting.
-    color = iter(plt.cm.jet(np.linspace(0, 1, len(first_pareto_list))))
+    color = iter(plt.cm.jet(np.linspace(0, 1, len(parameter.trackers.first_pareto_list))))
 
     # Get labels for individual fitnesses.
     ffs = parameter.params['FITNESS_FUNCTION'].fitness_functions
@@ -33,7 +33,7 @@ def save_pareto_fitness_plot(parameter):
     step_dir = 'pre' if ffs[0].maximise else 'post'
 
     # Plot data.
-    for i, gen in enumerate(first_pareto_list):
+    for i, gen in enumerate(parameter.trackers.first_pareto_list):
         c = next(color)
         ax1.step(gen[0], gen[1], linestyle='--',
                  where=step_dir, color=c, lw=0.35, alpha=0.25)
@@ -48,13 +48,13 @@ def save_pareto_fitness_plot(parameter):
 
     # Set up colorbar instead of legend. Normalise axis to scale of data.
     sm = plt.cm.ScalarMappable(cmap="jet",
-                   norm=plt.Normalize(vmin=0, vmax=len(first_pareto_list) - 1))
+                   norm=plt.Normalize(vmin=0, vmax=len(parameter.trackers.first_pareto_list) - 1))
 
     # Fake up the array of the scalar mappable.
     sm._A = []
 
     # Plot the colorbar.
-    cbar = plt.colorbar(sm, ticks=[0, len(first_pareto_list) - 1])
+    cbar = plt.colorbar(sm, ticks=[0, len(parameter.trackers.first_pareto_list) - 1])
 
     # Set label of colorbar.
     # cbar.ax.get_yaxis().labelpad = 15
