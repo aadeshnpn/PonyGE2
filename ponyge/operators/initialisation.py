@@ -35,7 +35,7 @@ def initialisation(parameter, size):
     return individuals
     
 
-def sample_genome(parameter):
+def sample_genome(parameter, size):
     """
     Generate a random genome, uniformly.
     
@@ -54,7 +54,7 @@ def uniform_genome(parameter, size):
     :return: A full population composed of randomly generated individuals.
     """
 
-    return [individual.Individual(sample_genome(parameter), None) for _ in range(size)]
+    return [individual.Individual(parameter, sample_genome(parameter), None) for _ in range(size)]
 
 
 def uniform_tree(parameter, size):

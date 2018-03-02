@@ -1,6 +1,6 @@
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 import xml.etree.ElementTree as ET
-
+import math
 
 class bt_diversity(base_ff):
     """
@@ -30,7 +30,7 @@ class bt_diversity(base_ff):
         new_execution = dict()
         sorted_values_sum = sum(self.sorted_values)
         behavior_len = len(self.execution_behaviors)
-        divisor = np.ceil(sorted_values_sum / behavior_len) * behavior_len
+        divisor = math.ceil(sorted_values_sum / behavior_len) * behavior_len
         if self.sorted_keys == self.execution_behaviors and \
                 sorted_values_sum % behavior_len == 0 and \
                 self.sorted_values[0] == int(
@@ -59,7 +59,11 @@ class bt_diversity(base_ff):
     def evaluate(self, ind, **kwargs):
         # ind.phenotype will be a xml file. We can parse through the xml file
         # and determine the diversity based on the nodes
-        root = ET.fromstring(ind.phenotype)
+        ind.phenotype = ind.phenotype.replace('[','<')
+        ind.phenotype = ind.phenotype.replace(']','>')
+        ind.phenotype = ind.phenotype.replace('%','"') 
+
+        self.root = ET.fromstring(ind.phenotype)
         
         self.contro_behaviors = {'Selector', 'Sequence'}
         nodes = []
