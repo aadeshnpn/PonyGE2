@@ -231,9 +231,9 @@ class Grammar(object):
 
                     if len(tmp_productions) == 1:
                         # Unit productions.
-                        print("Warning: Grammar contains unit production "
-                              "for production rule", rule.group('rulename'))
-                        print("         Unit productions consume GE codons.")
+                        #print("Warning: Grammar contains unit production "
+                        #      "for production rule", rule.group('rulename'))
+                        #print("         Unit productions consume GE codons.")
                 else:
                     # Conflicting rules with the same name.
                     raise ValueError("lhs should be unique",
