@@ -229,7 +229,7 @@ class Grammar(object):
                         "choices": tmp_productions,
                         "no_choices": len(tmp_productions)}
 
-                    if len(tmp_productions) == 1:
+                    #if len(tmp_productions) == 1:
                         # Unit productions.
                         #print("Warning: Grammar contains unit production "
                         #      "for production rule", rule.group('rulename'))
