@@ -189,7 +189,7 @@ class Parameters:
                 'AGENT_SIZE': 100,
                 # Interaction Probablity. How frequently the agents can interaction with each other
                 'INTERACTION_PROBABILITY': 0.5,
-                
+
                 # OTHER
                 # Set machine name (useful for doing multiple runs)
                 'MACHINE': machine_name
@@ -237,7 +237,7 @@ class Parameters:
 
                 # Set parameter
                 self.params[key] = value
-            
+
     def set_params(self, command_line_args, create_files=True):
         """
         This function parses all command line arguments specified by the user.
@@ -270,7 +270,8 @@ class Parameters:
         # LOAD PARAMETERS FILE
         # NOTE that the parameters file overwrites all previously set parameters.
         if 'PARAMETERS' in cmd_args:
-            self.load_params(path.join("..", "parameters", cmd_args['PARAMETERS']))
+            prefix, postfix = cmd_args['PARAMETERS'].split(',')
+            self.load_params(path.join(prefix, "parameters", postfix))
 
         # Join original params dictionary with command line specified arguments.
         # NOTE that command line arguments overwrite all previously set parameters.
@@ -318,13 +319,13 @@ class Parameters:
             clean_stats.clean_stats(self)
 
             # Crossover variables
-            from ponyge.operators.crossover import ( 
+            from ponyge.operators.crossover import (
                 variable_onepoint, variable_twopoint,
                 fixed_onepoint, fixed_twopoint
             )
-            variable_onepoint.representation = "linear"    
-            variable_twopoint.representation = "linear"    
-            fixed_onepoint.representation = "linear"                    
+            variable_onepoint.representation = "linear"
+            variable_twopoint.representation = "linear"
+            fixed_onepoint.representation = "linear"
             fixed_twopoint.representation = "linear"
 
             # Set GENOME_OPERATIONS automatically for faster linear operations.
@@ -357,8 +358,9 @@ class Parameters:
                         raise Exception(s)
 
             # Parse grammar file and set grammar class.
-            self.params['BNF_GRAMMAR'] = grammar.Grammar(self, path.join("..", "grammars",
-                                                    self.params['GRAMMAR_FILE']))
+            gprefix, gpostfix = self.params['GRAMMAR_FILE'].split(',')
+            self.params['BNF_GRAMMAR'] = grammar.Grammar(self, path.join(gprefix, "grammars",
+                                                    gpostfix))
 
             # Population loading for seeding runs (if specified)
             if self.params['TARGET_SEED_FOLDER']:
@@ -367,7 +369,7 @@ class Parameters:
                 from ponyge.operators.initialisation import load_population
 
                 # A target folder containing seed individuals has been given.
-                self.params['SEED_INDIVIDUALS'] = load_population(self, 
+                self.params['SEED_INDIVIDUALS'] = load_population(self,
                     self.params['TARGET_SEED_FOLDER'])
 
             elif self.params['REVERSE_MAPPING_TARGET']:

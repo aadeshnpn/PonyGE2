@@ -1,5 +1,5 @@
-<s> ::= [?xml version=%1.0% encoding=%UTF-8%?]<rootnode>
-<rootnode> ::= <cf>
+<s> ::= [?xml version=%1.0% encoding=%UTF-8%?]<cf>
+#<rootnode> ::= <cf>
 <cf> ::= <sequence> | <selector> 
 #| <decorator>
 <sequence> ::= [Sequence]<execution>[/Sequence] | [Sequence]<cf><cf>[/Sequence] | [Sequence]<sequence> <cf>[/Sequence]

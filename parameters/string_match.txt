@@ -5,7 +5,7 @@ CROSSOVER_PROBABILITY:  0.75
 DEBUG:                  False
 GENERATIONS:	        1000
 MAX_GENOME_LENGTH:      50
-GRAMMAR_FILE:           letter.bnf
+GRAMMAR_FILE:           ..,letter.bnf
 INITIALISATION:         uniform_tree
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    7
