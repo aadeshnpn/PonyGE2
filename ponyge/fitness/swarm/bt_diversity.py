@@ -10,18 +10,22 @@ class bt_diversity(base_ff):
     """
 
     maximise = True  # True as it ever was.
-    
+
     def __init__(self, parameter):
         # Initialise base fitness function class.
         super().__init__()
-        self.execution_behaviors = ['IsCarryable', 'IsSingleCarry', 
+        """
+        self.execution_behaviors = ['IsCarryable', 'IsSingleCarry',
         'SingleCarry', 'NeighbourObjects', 'IsMultipleCarry',
-        'IsInPartialAttached', 'InitiateMultipleCarry', 
+        'IsInPartialAttached', 'InitiateMultipleCarry',
         'IsEnoughStrengthToCarry', 'Move', 'GoTo',
         'IsMotionTrue', 'RandomWalk', 'IsMoveable', 'MultipleCarry']
+        """
+        self.execution_behaviors = ['MoveTowards', 'Explore',
+        'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
+        'NeighbourObjects']
+        self.execution_behaviors.sort()
 
-        self.execution_behaviors.sort()        
-    
     def calcualte_diversity(self):
         self.sorted_keys = list(self.execution.keys())
         self.sorted_keys.sort()
@@ -49,7 +53,7 @@ class bt_diversity(base_ff):
         else:
             other_match_count = self.other_match_value(self.execution)
             diversity = (other_match_count * 1.0) / divisor
-        
+
         return diversity * 100
 
     def other_match_value(self, exection):
@@ -61,10 +65,10 @@ class bt_diversity(base_ff):
         # and determine the diversity based on the nodes
         ind.phenotype = ind.phenotype.replace('[','<')
         ind.phenotype = ind.phenotype.replace(']','>')
-        ind.phenotype = ind.phenotype.replace('%','"') 
-
+        ind.phenotype = ind.phenotype.replace('%','"')
+        # print (ind.phenotype)
         self.root = ET.fromstring(ind.phenotype)
-        
+
         self.contro_behaviors = {'Selector', 'Sequence'}
         nodes = []
         self.control = dict()
@@ -76,11 +80,16 @@ class bt_diversity(base_ff):
                 self.control[node.tag] += 1
                 nodes.append(node.tag)
             else:
+                if node.text.find('_') != -1:
+                    node_text = node.text.split('_')
+                    node_text = node_text[0]
+                else:
+                    node_text = node.text
                 try:
-                    self.execution[node.text] += 1
+                    self.execution[node_text] += 1
                 except KeyError:
-                    self.execution[node.text] = 1
-                nodes.append(node.text)
-        
+                    self.execution[node_text] = 1
+                nodes.append(node_text)
+        print (self.execution, ind)
         fitness = self.calcualte_diversity()
         return fitness
