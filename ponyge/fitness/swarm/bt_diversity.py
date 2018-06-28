@@ -90,6 +90,6 @@ class bt_diversity(base_ff):
                 except KeyError:
                     self.execution[node_text] = 1
                 nodes.append(node_text)
-        print (self.execution, ind)
+
         fitness = self.calcualte_diversity()
         return fitness
