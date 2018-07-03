@@ -17,6 +17,5 @@ REPLACEMENT:            generational
 SELECTION:              truncation
 SELECTION_PROPORTION:   0.3
 TOURNAMENT_SIZE:        15
-#MAX_WRAPS:              10
 MUTATION_PROBABILITY:   0.01
 VERBOSE:                False
