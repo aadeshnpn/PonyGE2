@@ -5,7 +5,7 @@ CROSSOVER_PROBABILITY:  0.75
 DEBUG:                  False
 GENERATIONS:            80
 MAX_GENOME_LENGTH:      500
-GRAMMAR_FILE:           ..,bt.bnf
+GRAMMAR_FILE:           ..,bt10.bnf
 INITIALISATION:         PI_grow
 INVALID_SELECTION:      False
 MAX_INIT_TREE_DEPTH:    10
@@ -16,3 +16,4 @@ FITNESS_FUNCTION:       swarm.bt_diversity
 REPLACEMENT:            generational
 SELECTION:              tournament
 VERBOSE:                False
+COMMUNICATION:          True

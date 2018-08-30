@@ -2,6 +2,7 @@ from ponyge.fitness.base_ff_classes.base_ff import base_ff
 import xml.etree.ElementTree as ET
 import math
 
+
 class bt_diversity(base_ff):
     """
     Calculation the fintness of the individual.
@@ -21,9 +22,15 @@ class bt_diversity(base_ff):
         'IsEnoughStrengthToCarry', 'Move', 'GoTo',
         'IsMotionTrue', 'RandomWalk', 'IsMoveable', 'MultipleCarry']
         """
-        self.execution_behaviors = ['MoveTowards', 'Explore',
-        'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
-        'NeighbourObjects']
+        if parameter.params['COMMUNICATION'] is True:
+            self.execution_behaviors = ['MoveTowards', 'Explore',
+            'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
+            'NeighbourObjects', 'CompositeDropCue', 'CompositePickCue',
+            'CompositeSendSignal','CompositeReceiveSignal']
+        else:
+            self.execution_behaviors = ['MoveTowards', 'Explore',
+            'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
+            'NeighbourObjects']
         self.execution_behaviors.sort()
 
     def calcualte_diversity(self):

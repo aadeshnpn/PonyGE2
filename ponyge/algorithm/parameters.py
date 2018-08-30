@@ -189,7 +189,7 @@ class Parameters:
                 'AGENT_SIZE': 100,
                 # Interaction Probablity. How frequently the agents can interaction with each other
                 'INTERACTION_PROBABILITY': 0.5,
-
+                'COMMUNICATION': False,
                 # OTHER
                 # Set machine name (useful for doing multiple runs)
                 'MACHINE': machine_name
