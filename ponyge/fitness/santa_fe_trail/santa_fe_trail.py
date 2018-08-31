@@ -2,7 +2,7 @@
 Trail class, ant simulator and fitness function for santa fe trail
 """
 
-from ponyge.algorithm.parameters import params
+# from ponyge.algorithm.parameters import params
 from ponyge.fitness.base_ff_classes.base_ff import base_ff
 import copy
 from os import path
@@ -12,16 +12,16 @@ from ponyge.fitness.santa_fe_trail.gp import AntSimulator
 """
 Ant simulator to simulate ants in Santa Fe trail environment
 """
-    
+
 class santa_fe_trail(base_ff):
     #Fitness function for Santa Fe Trail using Novelty Search
 
-    def __init__(self):
+    def __init__(self, parameters):
         # Initialise base fitness function class.
         super().__init__()
-        
+
         # Set target string.
-        self.target = params['TARGET']
+        # self.target = parameters.params['TARGET']
         self.maximise = True
 
     def evaluate(self, ind, **kwargs):
