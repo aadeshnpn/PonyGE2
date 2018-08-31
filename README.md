@@ -31,11 +31,14 @@ All requirements can be satisfied with [Anaconda](https://www.continuum.io/downl
 
 # Running PonyGE2
 -----------------
+We have provide a setup script. You first need to install PonyGE2 by
 
-We don't provide any setup script. You can run an example problem (the default is regression, see below) just by typing:
+    $ pip install .
+    
+You can run an example problem (the default is letter match, see below) just by typing:
 
-    $ cd src
-    $ python ponyge.py
+    $ cd examples
+    $ python letter.py
 
 This will run an example problem and generate a results folder. The folder contains several files showing the run's stats, producing graphs and documenting the parameters used, as well as a file detailing the best individual. For a more verbose command line experience run the following:
 
