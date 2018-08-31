@@ -27,6 +27,8 @@ import math
 import re
 import sys
 import warnings
+import os
+import imp
 
 from collections import defaultdict, deque
 from functools import partial, wraps
@@ -478,10 +480,10 @@ def progn(*args):
     for arg in args:
         arg()
 
-def prog2(out1, out2): 
+def prog2(out1, out2):
     return partial(progn,out1,out2)
 
-def prog3(out1, out2, out3):     
+def prog3(out1, out2, out3):
     return partial(progn,out1,out2,out3)
 
 def if_then_else(condition, out1, out2):
@@ -491,7 +493,7 @@ class AntSimulator(object):
     direction = ["north","east","south","west"]
     dir_row = [1, 0, -1, 0]
     dir_col = [0, 1, 0, -1]
-    
+
     def __init__(self, max_moves):
         self.max_moves = max_moves
         self.moves = 0
@@ -500,28 +502,28 @@ class AntSimulator(object):
         self.load_trail()
 
     def _reset(self):
-        self.load_trail()        
-        self.row = self.row_start 
-        self.col = self.col_start 
+        self.load_trail()
+        self.row = self.row_start
+        self.col = self.col_start
         self.dir = 1
-        self.moves = 0  
+        self.moves = 0
         self.eaten = 0
         self.matrix_exc = copy.deepcopy(self.matrix)
 
     @property
     def position(self):
         return (self.row, self.col, self.direction[self.dir])
-            
-    def left(self): 
+
+    def left(self):
         if self.moves < self.max_moves:
             self.moves += 1
             self.dir = (self.dir - 1) % 4
 
     def right(self):
         if self.moves < self.max_moves:
-            self.moves += 1    
+            self.moves += 1
             self.dir = (self.dir + 1) % 4
-        
+
     def move(self):
         if self.moves < self.max_moves:
             self.moves += 1
@@ -533,12 +535,12 @@ class AntSimulator(object):
 
     def sense_food(self):
         ahead_row = (self.row + self.dir_row[self.dir]) % self.matrix_row
-        ahead_col = (self.col + self.dir_col[self.dir]) % self.matrix_col        
+        ahead_col = (self.col + self.dir_col[self.dir]) % self.matrix_col
         return self.matrix_exc[ahead_row][ahead_col] == "food"
-   
+
     def if_food_ahead(self, out1, out2):
         return partial(if_then_else, self.sense_food, out1, out2)
-   
+
     def run(self,routine):
         self._reset()
         #print (routine)
@@ -569,7 +571,9 @@ class AntSimulator(object):
         self.matrix_exc = copy.deepcopy(self.matrix)
 
     def load_trail(self):
-        trail_filename = path.join("fitness", "santa_fe_trail", 'santafe_trail.txt')
+        filename = '/fitness/santa_fe_trail/santafe_trail.txt'
+        trail_filename = os.path.join(imp.find_module("ponyge")[1] + filename)
+        print (trail_filename)
         with open (trail_filename) as trail_file:
             self.parse_matrix(trail_file)
 
@@ -580,7 +584,7 @@ class AntSimulator(object):
         pset.addPrimitive(prog3, 3)
         pset.addTerminal(self.move)
         pset.addTerminal(self.left)
-        pset.addTerminal(self.right)   
+        pset.addTerminal(self.right)
         routine = compile(individual, pset)
         return routine
 
@@ -598,9 +602,9 @@ def main():
     """
     #ant.load_trail()
     individual = 'prog3(if_food_ahead(move_forward, move_forward), if_food_ahead(turn_left, move_forward), if_food_ahead(turn_right, move_forward))'
-    individual = 'prog3(if_food_ahead(move, move), if_food_ahead(left, move), if_food_ahead(right, move))'    
+    individual = 'prog3(if_food_ahead(move, move), if_food_ahead(left, move), if_food_ahead(right, move))'
     #individual = 'prog3(prog3(move_forward,turn_right, if_food_ahead(if_food_ahead(prog3(move_forward, move_forward, move_forward), prog2(turn_left, turn_right)), turn_left)), if_food_ahead(turn_left, turn_left), if_food_ahead(move_forward, turn_right))'
-    #individual = 'prog3(prog3(move_forward,turn_right, if_food_ahead(if_food_ahead(prog3(move_forward, move_forward, move_forward), prog3(turn_left, turn_right,move_forward)), turn_left)), if_food_ahead(turn_left, turn_left), if_food_ahead(move_forward, turn_right))'    
+    #individual = 'prog3(prog3(move_forward,turn_right, if_food_ahead(if_food_ahead(prog3(move_forward, move_forward, move_forward), prog3(turn_left, turn_right,move_forward)), turn_left)), if_food_ahead(turn_left, turn_left), if_food_ahead(move_forward, turn_right))'
     #individual = 'prog2(left,prog2(prog3(left,right,left),right))'
 
 

@@ -24,6 +24,7 @@ setup(
     author_email='aadeshnpn@byu.net',
     url='https://github.com/PonyGE/PonyGE2',
     packages=find_packages(),
+    include_package_data=True,
     install_requires=requires,
     keywords='GE',
     license='Apache 2.0',

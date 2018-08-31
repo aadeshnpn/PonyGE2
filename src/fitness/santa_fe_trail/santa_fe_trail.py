@@ -2,7 +2,6 @@
 Trail class, ant simulator and fitness function for santa fe trail
 """
 
-from algorithm.parameters import params
 from fitness.base_ff_classes.base_ff import base_ff
 import copy
 from os import path
@@ -12,19 +11,19 @@ from fitness.santa_fe_trail.gp import AntSimulator
 """
 Ant simulator to simulate ants in Santa Fe trail environment
 """
-    
+
 class santa_fe_trail(base_ff):
     #Fitness function for matching a string. Takes a string and returns
     #fitness. Penalises output that is not the same length as the target.
     #Penalty given to individual string components which do not match ASCII
     #value of target.
 
-    def __init__(self):
+    def __init__(self, parameters):
         # Initialise base fitness function class.
         super().__init__()
-        
+
         # Set target string.
-        self.target = params['TARGET']
+        # self.target = parameters.params['TARGET']
 
     def evaluate(self, ind, **kwargs):
         ant = AntSimulator(600)
