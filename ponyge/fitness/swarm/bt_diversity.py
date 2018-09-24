@@ -31,6 +31,10 @@ class bt_diversity(base_ff):
             self.execution_behaviors = ['MoveTowards', 'Explore',
             'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
             'NeighbourObjects']
+
+        if parameter.params['MULTICARRY'] is True:
+            self.execution_behaviors += ['CompositeDropPartial', 'CompositeMultipleCarry']
+
         self.execution_behaviors.sort()
 
     def calcualte_diversity(self):
