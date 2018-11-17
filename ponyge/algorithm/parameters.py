@@ -145,7 +145,7 @@ class Parameters:
                 'SAVE_STATE': False,
                 # Specify how often the state of the current evolutionary run is
                 # saved (i.e. every n-th generation). Requires int value.
-                'SAVE_STATE_STEP': 1,
+                'SAVE_STATE_STEP': 100,
                 # Load an evolutionary run from a saved state. You must specify the
                 # full file path to the desired state file. Note that state files have
                 # no file type.
