@@ -22,18 +22,21 @@ class bt_diversity(base_ff):
         'IsEnoughStrengthToCarry', 'Move', 'GoTo',
         'IsMotionTrue', 'RandomWalk', 'IsMoveable', 'MultipleCarry']
         """
-        if parameter.params['COMMUNICATION'] is True:
-            self.execution_behaviors = ['MoveTowards', 'Explore',
-            'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
-            'NeighbourObjects', 'CompositeDropCue', 'CompositePickCue',
-            'CompositeSendSignal','CompositeReceiveSignal']
-        else:
-            self.execution_behaviors = ['MoveTowards', 'Explore',
-            'CompositeSingleCarry','CompositeDrop', 'MoveAway', 'IsDropable',
-            'NeighbourObjects']
+        self.execution_behaviors = [
+            'MoveTowards', 'Explore', 'CompositeSingleCarry',
+            'CompositeDrop', 'MoveAway', 'NeighbourObjects', 'IsDropable',
+            'IsCarrying', 'IsVisitedBefore']
 
         if parameter.params['MULTICARRY'] is True:
-            self.execution_behaviors += ['CompositeDropPartial', 'CompositeMultipleCarry']
+            self.execution_behaviors = [
+                'MoveTowards', 'Explore', 'CompositeDropPartial',
+                'CompositeMultipleCarry', 'IsVisitedBefore', 'MoveAway',
+                'IsInPartialAttached', 'NeighbourObjects']
+
+        if parameter.params['COMMUNICATION'] is True:
+            self.execution_behaviors += [
+                'CompositeDropCue', 'CompositePickCue', 'CompositeSendSignal',
+                'CompositeReceiveSignal']
 
         self.execution_behaviors.sort()
 
