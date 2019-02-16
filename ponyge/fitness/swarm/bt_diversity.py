@@ -63,14 +63,16 @@ class bt_diversity(base_ff):
                         self.execution[a] -= self.sorted_values[0]
                         if self.execution[a] > 0:
                             new_execution[a] = self.execution[a]
-
                     other_match_count = self.other_match_value(new_execution)
-                    diversity = (self.sorted_values[0] * behavior_len + other_match_count * 1.0) / divisor
+                    # diversity = (self.sorted_values[0] * behavior_len
+                    # + other_match_count * 1.0) / divisor
+                    diversity = 1.0 - (
+                        other_match_count * self.sorted_values[-2] / 100.0)
         else:
             other_match_count = self.other_match_value(self.execution)
             diversity = (other_match_count * 1.0) / divisor
 
-        return diversity * 100
+        return round(diversity * 25, 4)
 
     def other_match_value(self, exection):
         match_set = set(exection.keys()) & set(self.execution_behaviors)
@@ -82,10 +84,9 @@ class bt_diversity(base_ff):
         ind.phenotype = ind.phenotype.replace('[','<')
         ind.phenotype = ind.phenotype.replace(']','>')
         ind.phenotype = ind.phenotype.replace('%','"')
-        # print (ind.phenotype)
         self.root = ET.fromstring(ind.phenotype)
 
-        self.contro_behaviors = {'Selector', 'Sequence'}
+        self.control_behaviors = {'Selector', 'Sequence'}
         nodes = []
         self.control = dict()
         self.control['Sequence'] = 0
@@ -106,6 +107,5 @@ class bt_diversity(base_ff):
                 except KeyError:
                     self.execution[node_text] = 1
                 nodes.append(node_text)
-
         fitness = self.calcualte_diversity()
         return fitness
